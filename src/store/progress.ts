@@ -19,6 +19,11 @@ interface ProgressState {
   weakLetters: string[]
   weakNumbers: string[]
   weakHarakat: string[]
+  masteredVocab: string[]
+  weakVocab: string[]
+  masteredNames: string[]
+  weakNames: string[]
+  prophetsRead: string[]
   lastActiveDate: string | null
   streak: number
 
@@ -39,6 +44,11 @@ interface ProgressState {
   markNumberWeak: (id: string) => void
   markHarakaWeak: (id: string) => void
   clearHarakaWeak: (id: string) => void
+  markVocabMastered: (id: string) => void
+  markVocabWeak: (id: string) => void
+  markNameMastered: (id: string) => void
+  markNameWeak: (id: string) => void
+  markProphetRead: (id: string) => void
   setReadingLevelCompleted: (level: number) => void
   touchStreak: () => void
   resetProgress: () => void
@@ -64,6 +74,11 @@ const DATA_KEYS = [
   'weakLetters',
   'weakNumbers',
   'weakHarakat',
+  'masteredVocab',
+  'weakVocab',
+  'masteredNames',
+  'weakNames',
+  'prophetsRead',
   'lastActiveDate',
   'streak',
 ] as const satisfies readonly (keyof ProgressState)[]
@@ -99,6 +114,11 @@ export const useProgress = create<ProgressState>()(
       weakLetters: [],
       weakNumbers: [],
       weakHarakat: [],
+      masteredVocab: [],
+      weakVocab: [],
+      masteredNames: [],
+      weakNames: [],
+      prophetsRead: [],
       lastActiveDate: null,
       streak: 0,
 
@@ -167,6 +187,26 @@ export const useProgress = create<ProgressState>()(
       markHarakaWeak: (id) => set({ weakHarakat: addUnique(get().weakHarakat, id) }),
       clearHarakaWeak: (id) => set({ weakHarakat: removeItem(get().weakHarakat, id) }),
 
+      markVocabMastered: (id) => {
+        const wasNew = !get().masteredVocab.includes(id)
+        set({ masteredVocab: addUnique(get().masteredVocab, id), weakVocab: removeItem(get().weakVocab, id) })
+        if (wasNew) get().addXp(3)
+      },
+      markVocabWeak: (id) => set({ weakVocab: addUnique(get().weakVocab, id) }),
+
+      markNameMastered: (id) => {
+        const wasNew = !get().masteredNames.includes(id)
+        set({ masteredNames: addUnique(get().masteredNames, id), weakNames: removeItem(get().weakNames, id) })
+        if (wasNew) get().addXp(2)
+      },
+      markNameWeak: (id) => set({ weakNames: addUnique(get().weakNames, id) }),
+
+      markProphetRead: (id) => {
+        const wasNew = !get().prophetsRead.includes(id)
+        set({ prophetsRead: addUnique(get().prophetsRead, id) })
+        if (wasNew) get().addXp(5)
+      },
+
       setReadingLevelCompleted: (level) =>
         set({ readingLevelCompleted: Math.max(level, get().readingLevelCompleted) }),
 
@@ -197,6 +237,11 @@ export const useProgress = create<ProgressState>()(
           weakLetters: [],
           weakNumbers: [],
           weakHarakat: [],
+          masteredVocab: [],
+          weakVocab: [],
+          masteredNames: [],
+          weakNames: [],
+          prophetsRead: [],
           lastActiveDate: null,
           streak: 0,
         }),

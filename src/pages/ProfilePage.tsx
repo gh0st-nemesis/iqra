@@ -6,6 +6,9 @@ import { readingWords } from '../data/reading'
 import { tajwidRules } from '../data/tajwid'
 import { wuduSteps, tayammumSteps } from '../data/ablutions'
 import { prayerSteps } from '../data/salat'
+import { vocabWords } from '../data/vocabulary'
+import { namesOfAllah } from '../data/namesOfAllah'
+import { prophets } from '../data/prophets'
 import { useProgress } from '../store/progress'
 import { useTheme } from '../store/theme'
 import { useSettings, TEXT_SCALE_LABELS, type TextScale } from '../store/settings'
@@ -21,12 +24,15 @@ import {
   DropletIcon,
   FlameIcon,
   HashIcon,
+  LayersIcon,
   LettersIcon,
   MoonIcon,
   MusicNoteIcon,
   PenIcon,
   PrayerFigureIcon,
+  ScrollIcon,
   SettingsIcon,
+  SparkleIcon,
   StarIcon,
   SunIcon,
   TrophyIcon,
@@ -46,6 +52,9 @@ const badgeIcons = {
   trophy: TrophyIcon,
   flame: FlameIcon,
   star: StarIcon,
+  layers: LayersIcon,
+  sparkle: SparkleIcon,
+  scroll: ScrollIcon,
 }
 
 export default function ProfilePage() {
@@ -61,6 +70,9 @@ export default function ProfilePage() {
   const wuduStepsSeen = useProgress((s) => s.wuduStepsSeen)
   const tayammumStepsSeen = useProgress((s) => s.tayammumStepsSeen)
   const prayerStepsSeen = useProgress((s) => s.prayerStepsSeen)
+  const masteredVocab = useProgress((s) => s.masteredVocab)
+  const masteredNames = useProgress((s) => s.masteredNames)
+  const prophetsRead = useProgress((s) => s.prophetsRead)
   const resetProgress = useProgress((s) => s.resetProgress)
   const exportProgress = useProgress((s) => s.exportProgress)
   const importProgress = useProgress((s) => s.importProgress)
@@ -86,6 +98,9 @@ export default function ProfilePage() {
     tajwid: tajwidRules.length,
     ablutionSteps: wuduSteps.length + tayammumSteps.length,
     prayerSteps: prayerSteps.length,
+    vocab: vocabWords.length,
+    names: namesOfAllah.length,
+    prophets: prophets.length,
   }
   const badgeProgress = {
     masteredLetters,
@@ -97,6 +112,9 @@ export default function ProfilePage() {
     tayammumStepsSeen,
     prayerStepsSeen,
     memorizedVerses,
+    masteredVocab,
+    masteredNames,
+    prophetsRead,
     streak,
   }
   const unlockedBadges = badgeDefinitions.filter((b) => b.unlocked(badgeProgress, badgeTotals))
@@ -157,6 +175,9 @@ export default function ProfilePage() {
     { label: 'Règles de tajwîd vues', value: tajwidRulesSeen.length, max: tajwidRules.length },
     { label: 'Versets écoutés', value: versesListened.length, max: null },
     { label: 'Versets mémorisés', value: memorizedVerses.length, max: null },
+    { label: 'Mots de vocabulaire maîtrisés', value: masteredVocab.length, max: vocabWords.length },
+    { label: "Noms d'Allah maîtrisés", value: masteredNames.length, max: namesOfAllah.length },
+    { label: 'Récits de prophètes lus', value: prophetsRead.length, max: prophets.length },
   ]
 
   function handleResetClick() {

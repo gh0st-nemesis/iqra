@@ -48,6 +48,9 @@ export interface BadgeTotals {
   tajwid: number
   ablutionSteps: number
   prayerSteps: number
+  vocab: number
+  names: number
+  prophets: number
 }
 
 export interface BadgeProgressInput {
@@ -60,6 +63,9 @@ export interface BadgeProgressInput {
   tayammumStepsSeen: string[]
   prayerStepsSeen: string[]
   memorizedVerses: unknown[]
+  masteredVocab: string[]
+  masteredNames: string[]
+  prophetsRead: string[]
   streak: number
 }
 
@@ -79,6 +85,9 @@ export interface BadgeDefinition {
     | 'trophy'
     | 'flame'
     | 'star'
+    | 'layers'
+    | 'sparkle'
+    | 'scroll'
   unlocked: (p: BadgeProgressInput, t: BadgeTotals) => boolean
 }
 
@@ -152,6 +161,27 @@ export const badgeDefinitions: BadgeDefinition[] = [
     description: 'Mémoriser 10 versets du Coran',
     iconName: 'bookmark',
     unlocked: (p) => p.memorizedVerses.length >= 10,
+  },
+  {
+    id: 'vocab-master',
+    title: 'Riche vocabulaire',
+    description: 'Maîtriser tous les mots de vocabulaire',
+    iconName: 'layers',
+    unlocked: (p, t) => p.masteredVocab.length >= t.vocab,
+  },
+  {
+    id: 'names-master',
+    title: 'Les 99 Noms',
+    description: 'Maîtriser les 99 Noms d’Allah',
+    iconName: 'sparkle',
+    unlocked: (p, t) => p.masteredNames.length >= t.names,
+  },
+  {
+    id: 'prophets-master',
+    title: 'Conteur des prophètes',
+    description: 'Lire tous les récits des prophètes',
+    iconName: 'scroll',
+    unlocked: (p, t) => p.prophetsRead.length >= t.prophets,
   },
   {
     id: 'streak-7',

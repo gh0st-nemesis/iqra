@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import { alphabet } from '../data/alphabet'
 import { numbers } from '../data/numbers'
 import { harakat } from '../data/harakat'
+import { vocabWords } from '../data/vocabulary'
+import { namesOfAllah } from '../data/namesOfAllah'
 import { useProgress } from '../store/progress'
 import McqQuiz, { type McqQuestion } from '../components/McqQuiz'
 import { buildChoices, shuffle } from '../lib/quiz'
@@ -10,7 +12,13 @@ import { CheckCircleIcon, RefreshIcon, TrophyIcon } from '../components/icons'
 
 const MAX_QUESTIONS = 15
 
-function buildQuestions(weakLetters: string[], weakNumbers: string[], weakHarakat: string[]): McqQuestion[] {
+function buildQuestions(
+  weakLetters: string[],
+  weakNumbers: string[],
+  weakHarakat: string[],
+  weakVocab: string[],
+  weakNames: string[],
+): McqQuestion[] {
   const letterQuestions: McqQuestion[] = weakLetters
     .map((id) => alphabet.find((l) => l.id === id))
     .filter((l): l is NonNullable<typeof l> => !!l)
@@ -53,18 +61,55 @@ function buildQuestions(weakLetters: string[], weakNumbers: string[], weakHaraka
       correctChoice: h.demoTransliteration,
     }))
 
-  return shuffle([...letterQuestions, ...numberQuestions, ...harakaQuestions]).slice(0, MAX_QUESTIONS)
+  const vocabQuestions: McqQuestion[] = weakVocab
+    .map((id) => vocabWords.find((w) => w.id === id))
+    .filter((w): w is NonNullable<typeof w> => !!w)
+    .map((w) => ({
+      id: `vocab:${w.id}`,
+      prompt: w.arabic,
+      promptIsArabic: true,
+      choices: buildChoices(
+        w.meaning,
+        vocabWords.map((x) => x.meaning),
+      ),
+      correctChoice: w.meaning,
+    }))
+
+  const nameQuestions: McqQuestion[] = weakNames
+    .map((id) => namesOfAllah.find((n) => n.id === id))
+    .filter((n): n is NonNullable<typeof n> => !!n)
+    .map((n) => ({
+      id: `name:${n.id}`,
+      prompt: n.arabic,
+      promptIsArabic: true,
+      choices: buildChoices(
+        n.meaning,
+        namesOfAllah.map((x) => x.meaning),
+      ),
+      correctChoice: n.meaning,
+    }))
+
+  return shuffle([...letterQuestions, ...numberQuestions, ...harakaQuestions, ...vocabQuestions, ...nameQuestions]).slice(
+    0,
+    MAX_QUESTIONS,
+  )
 }
 
 export default function RevisionPage() {
   const weakLetters = useProgress((s) => s.weakLetters)
   const weakNumbers = useProgress((s) => s.weakNumbers)
   const weakHarakat = useProgress((s) => s.weakHarakat)
+  const weakVocab = useProgress((s) => s.weakVocab)
+  const weakNames = useProgress((s) => s.weakNames)
   const markLetterMastered = useProgress((s) => s.markLetterMastered)
   const markNumberMastered = useProgress((s) => s.markNumberMastered)
   const clearHarakaWeak = useProgress((s) => s.clearHarakaWeak)
+  const markVocabMastered = useProgress((s) => s.markVocabMastered)
+  const markNameMastered = useProgress((s) => s.markNameMastered)
 
-  const [questions] = useState<McqQuestion[]>(() => buildQuestions(weakLetters, weakNumbers, weakHarakat))
+  const [questions] = useState<McqQuestion[]>(() =>
+    buildQuestions(weakLetters, weakNumbers, weakHarakat, weakVocab, weakNames),
+  )
   const [result, setResult] = useState<{ score: number; total: number } | null>(null)
 
   function handleCorrect(taggedId: string) {
@@ -72,9 +117,11 @@ export default function RevisionPage() {
     if (category === 'letter') markLetterMastered(id)
     else if (category === 'number') markNumberMastered(id)
     else if (category === 'haraka') clearHarakaWeak(id)
+    else if (category === 'vocab') markVocabMastered(id)
+    else if (category === 'name') markNameMastered(id)
   }
 
-  const totalWeak = weakLetters.length + weakNumbers.length + weakHarakat.length
+  const totalWeak = weakLetters.length + weakNumbers.length + weakHarakat.length + weakVocab.length + weakNames.length
 
   return (
     <div className="mx-auto max-w-xl">
@@ -82,7 +129,8 @@ export default function RevisionPage() {
         <RefreshIcon className="h-6 w-6 text-brand-600 dark:text-brand-400" /> Révision
       </h1>
       <p className="mb-6 text-sm text-brand-500 dark:text-slate-400">
-        Un quiz ciblé, mélangeant lettres, chiffres et harakat où tu t&apos;es trompé récemment.
+        Un quiz ciblé, mélangeant lettres, chiffres, harakat, vocabulaire et noms d&apos;Allah où tu t&apos;es trompé
+        récemment.
       </p>
 
       {questions.length === 0 ? (
@@ -90,8 +138,8 @@ export default function RevisionPage() {
           <CheckCircleIcon className="mx-auto mb-3 h-10 w-10 text-green-500" />
           <p className="mb-1 font-semibold text-brand-800 dark:text-slate-100">Rien à réviser pour le moment !</p>
           <p className="text-sm text-brand-500 dark:text-slate-400">
-            Continue les quiz de l&apos;Alphabet, des Chiffres et des Harakat : tes erreurs atterriront
-            automatiquement ici.
+            Continue les quiz de l&apos;Alphabet, des Chiffres, des Harakat, du Vocabulaire et des Noms d&apos;Allah :
+            tes erreurs atterriront automatiquement ici.
           </p>
         </div>
       ) : result ? (

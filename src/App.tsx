@@ -12,6 +12,9 @@ import QuranPage from './pages/QuranPage'
 import SurahPage from './pages/SurahPage'
 import ProfilePage from './pages/ProfilePage'
 import RevisionPage from './pages/RevisionPage'
+import VocabularyPage from './pages/VocabularyPage'
+import NamesPage from './pages/NamesPage'
+import ProphetsPage from './pages/ProphetsPage'
 
 export default function App() {
   return (
@@ -27,6 +30,9 @@ export default function App() {
         <Route path="/tajwid" element={<TajwidPage />} />
         <Route path="/coran" element={<QuranPage />} />
         <Route path="/coran/:number" element={<SurahPage />} />
+        <Route path="/vocabulaire" element={<VocabularyPage />} />
+        <Route path="/noms-d-allah" element={<NamesPage />} />
+        <Route path="/prophetes" element={<ProphetsPage />} />
         <Route path="/profil" element={<ProfilePage />} />
         <Route path="/revision" element={<RevisionPage />} />
         <Route path="*" element={<Home />} />

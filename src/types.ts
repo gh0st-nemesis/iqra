@@ -112,9 +112,112 @@ export interface PrayerStep {
   image: RealPhoto
 }
 
-export type ModuleId = 'alphabet' | 'numbers' | 'harakat' | 'reading' | 'tajwid' | 'quran' | 'ablutions' | 'salat'
+export type ModuleId =
+  | 'alphabet'
+  | 'numbers'
+  | 'harakat'
+  | 'reading'
+  | 'tajwid'
+  | 'quran'
+  | 'ablutions'
+  | 'salat'
+  | 'vocabulary'
+  | 'names'
+  | 'prophets'
+  | 'adhkar'
+  | 'knowledge'
 
-export type ModuleIconName = 'letters' | 'hash' | 'pen' | 'book' | 'music' | 'landmark' | 'droplet' | 'prayer'
+export type ModuleIconName =
+  | 'letters'
+  | 'hash'
+  | 'pen'
+  | 'book'
+  | 'music'
+  | 'landmark'
+  | 'droplet'
+  | 'prayer'
+  | 'layers'
+  | 'sparkle'
+  | 'scroll'
+  | 'sunmoon'
+  | 'compass'
+
+// --- Vocabulaire ---
+
+export type VocabCategory = 'salutations' | 'famille' | 'maison' | 'couleurs' | 'phrases' | 'racines'
+
+export interface VocabWord {
+  id: string
+  category: VocabCategory
+  arabic: string
+  transliteration: string
+  meaning: string
+  note?: string
+}
+
+// --- Noms d'Allah ---
+
+export interface NameOfAllah {
+  id: string
+  number: number
+  arabic: string
+  transliteration: string
+  meaning: string
+}
+
+// --- Prophètes ---
+
+export interface ProphetVocabItem {
+  arabic: string
+  transliteration: string
+  meaning: string
+}
+
+export interface Prophet {
+  id: string
+  order: number
+  name: string
+  arabicName: string
+  summary: string
+  lesson: string
+  vocab: ProphetVocabItem[]
+}
+
+// --- Adhkar ---
+
+export interface AdhkarItem {
+  id: string
+  order: number
+  title: string
+  dua: RitualDua
+  repeat?: number
+  quranRef?: { surahNumber: number; label: string }
+}
+
+// --- Connaissances (piliers, akhlaq, calendrier) ---
+
+export interface PillarItem {
+  id: string
+  order: number
+  title: string
+  arabicTitle?: string
+  description: string
+}
+
+export interface AkhlaqLesson {
+  id: string
+  order: number
+  title: string
+  description: string
+}
+
+export interface HijriMonth {
+  id: string
+  order: number
+  arabicName: string
+  transliteration: string
+  note: string
+}
 
 export interface ModuleMeta {
   id: ModuleId

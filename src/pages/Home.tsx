@@ -7,6 +7,9 @@ import { readingWords } from '../data/reading'
 import { tajwidRules } from '../data/tajwid'
 import { wuduSteps, tayammumSteps } from '../data/ablutions'
 import { prayerSteps } from '../data/salat'
+import { vocabWords } from '../data/vocabulary'
+import { namesOfAllah } from '../data/namesOfAllah'
+import { prophets } from '../data/prophets'
 import { TOTAL_QURAN_VERSES } from '../lib/quranApi'
 import { useProgress } from '../store/progress'
 import ProgressBar from '../components/ProgressBar'
@@ -25,6 +28,9 @@ export default function Home() {
   const weakLetters = useProgress((s) => s.weakLetters)
   const weakNumbers = useProgress((s) => s.weakNumbers)
   const weakHarakat = useProgress((s) => s.weakHarakat)
+  const masteredVocab = useProgress((s) => s.masteredVocab)
+  const masteredNames = useProgress((s) => s.masteredNames)
+  const prophetsRead = useProgress((s) => s.prophetsRead)
   const xp = useProgress((s) => s.xp)
 
   const totalWeak = weakLetters.length + weakNumbers.length + weakHarakat.length
@@ -41,6 +47,9 @@ export default function Home() {
     salat: { value: prayerStepsSeen.length, max: prayerSteps.length },
     tajwid: { value: tajwidRulesSeen.length, max: tajwidRules.length },
     quran: { value: versesListened.length, max: TOTAL_QURAN_VERSES },
+    vocabulary: { value: masteredVocab.length, max: vocabWords.length },
+    names: { value: masteredNames.length, max: namesOfAllah.length },
+    prophets: { value: prophetsRead.length, max: prophets.length },
   }
 
   return (
