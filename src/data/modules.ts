@@ -1,6 +1,7 @@
 import type { ModuleMeta } from '../types'
 
 export const modules: ModuleMeta[] = [
+  // --- Parcours "Langue arabe" ---
   {
     id: 'alphabet',
     title: 'Alphabet',
@@ -9,6 +10,7 @@ export const modules: ModuleMeta[] = [
     icon: 'letters',
     color: 'from-teal-500 to-teal-600',
     path: '/alphabet',
+    track: 'arabic',
   },
   {
     id: 'numbers',
@@ -18,6 +20,7 @@ export const modules: ModuleMeta[] = [
     icon: 'hash',
     color: 'from-rose-500 to-rose-600',
     path: '/chiffres',
+    track: 'arabic',
   },
   {
     id: 'harakat',
@@ -27,6 +30,7 @@ export const modules: ModuleMeta[] = [
     icon: 'pen',
     color: 'from-amber-500 to-amber-600',
     path: '/harakat',
+    track: 'arabic',
   },
   {
     id: 'reading',
@@ -36,42 +40,7 @@ export const modules: ModuleMeta[] = [
     icon: 'book',
     color: 'from-sky-500 to-sky-600',
     path: '/lecture',
-  },
-  {
-    id: 'ablutions',
-    title: 'Ablutions',
-    arabicTitle: 'الوضوء والتيمم',
-    description: 'Le wudû (avec eau) et le tayammum (à sec), étape par étape',
-    icon: 'droplet',
-    color: 'from-cyan-500 to-cyan-600',
-    path: '/ablutions',
-  },
-  {
-    id: 'salat',
-    title: 'La Salat',
-    arabicTitle: 'الصلاة',
-    description: 'Les positions de la prière et ce qui se dit à chaque étape',
-    icon: 'prayer',
-    color: 'from-indigo-500 to-indigo-600',
-    path: '/salat',
-  },
-  {
-    id: 'tajwid',
-    title: 'Tajwîd',
-    arabicTitle: 'التجويد',
-    description: 'Les règles de belle récitation du Coran',
-    icon: 'music',
-    color: 'from-purple-500 to-purple-600',
-    path: '/tajwid',
-  },
-  {
-    id: 'quran',
-    title: 'Récitation coranique',
-    arabicTitle: 'القرآن الكريم',
-    description: 'Lire et écouter les sourates avec de vrais récitateurs',
-    icon: 'landmark',
-    color: 'from-emerald-600 to-emerald-700',
-    path: '/coran',
+    track: 'arabic',
   },
   {
     id: 'vocabulary',
@@ -81,6 +50,49 @@ export const modules: ModuleMeta[] = [
     icon: 'layers',
     color: 'from-lime-500 to-lime-600',
     path: '/vocabulaire',
+    track: 'arabic',
+  },
+  {
+    id: 'tajwid',
+    title: 'Tajwîd',
+    arabicTitle: 'التجويد',
+    description: 'Les règles de belle récitation du Coran',
+    icon: 'music',
+    color: 'from-purple-500 to-purple-600',
+    path: '/tajwid',
+    track: 'arabic',
+  },
+
+  // --- Parcours "Connaissances islamiques" ---
+  {
+    id: 'ablutions',
+    title: 'Ablutions',
+    arabicTitle: 'الوضوء والتيمم',
+    description: 'Le wudû (avec eau) et le tayammum (à sec), étape par étape',
+    icon: 'droplet',
+    color: 'from-cyan-500 to-cyan-600',
+    path: '/ablutions',
+    track: 'islam',
+  },
+  {
+    id: 'salat',
+    title: 'La Salat',
+    arabicTitle: 'الصلاة',
+    description: 'Les positions de la prière et ce qui se dit à chaque étape',
+    icon: 'prayer',
+    color: 'from-indigo-500 to-indigo-600',
+    path: '/salat',
+    track: 'islam',
+  },
+  {
+    id: 'quran',
+    title: 'Récitation coranique',
+    arabicTitle: 'القرآن الكريم',
+    description: 'Lire et écouter les sourates avec de vrais récitateurs',
+    icon: 'landmark',
+    color: 'from-emerald-600 to-emerald-700',
+    path: '/coran',
+    track: 'islam',
   },
   {
     id: 'names',
@@ -90,6 +102,7 @@ export const modules: ModuleMeta[] = [
     icon: 'sparkle',
     color: 'from-yellow-500 to-yellow-600',
     path: '/noms-d-allah',
+    track: 'islam',
   },
   {
     id: 'prophets',
@@ -99,5 +112,26 @@ export const modules: ModuleMeta[] = [
     icon: 'scroll',
     color: 'from-orange-500 to-orange-600',
     path: '/prophetes',
+    track: 'islam',
+  },
+  {
+    id: 'adhkar',
+    title: 'Adhkar',
+    arabicTitle: 'الأذكار',
+    description: 'Les invocations du quotidien : matin, soir et moments clés de la journée',
+    icon: 'sunmoon',
+    color: 'from-fuchsia-500 to-fuchsia-600',
+    path: '/adhkar',
+    track: 'islam',
+  },
+  {
+    id: 'knowledge',
+    title: 'Connaissances',
+    arabicTitle: 'معلومات إسلامية',
+    description: "Les piliers de l'islam et de la foi, l'akhlâq et le calendrier hijri",
+    icon: 'compass',
+    color: 'from-stone-500 to-stone-600',
+    path: '/connaissances',
+    track: 'islam',
   },
 ]

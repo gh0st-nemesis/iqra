@@ -185,9 +185,12 @@ export interface Prophet {
 
 // --- Adhkar ---
 
+export type AdhkarCategory = 'matin' | 'soir' | 'quotidien'
+
 export interface AdhkarItem {
   id: string
   order: number
+  category: AdhkarCategory
   title: string
   dua: RitualDua
   repeat?: number
@@ -219,6 +222,8 @@ export interface HijriMonth {
   note: string
 }
 
+export type ModuleTrack = 'arabic' | 'islam'
+
 export interface ModuleMeta {
   id: ModuleId
   title: string
@@ -227,4 +232,5 @@ export interface ModuleMeta {
   icon: ModuleIconName
   color: string
   path: string
+  track: ModuleTrack
 }

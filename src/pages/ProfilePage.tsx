@@ -9,6 +9,8 @@ import { prayerSteps } from '../data/salat'
 import { vocabWords } from '../data/vocabulary'
 import { namesOfAllah } from '../data/namesOfAllah'
 import { prophets } from '../data/prophets'
+import { adhkarItems } from '../data/adhkar'
+import { akhlaqLessons, hijriMonths, pillarsOfFaith, pillarsOfIslam } from '../data/knowledge'
 import { useProgress } from '../store/progress'
 import { useTheme } from '../store/theme'
 import { useSettings, TEXT_SCALE_LABELS, type TextScale } from '../store/settings'
@@ -24,6 +26,7 @@ import {
   DropletIcon,
   FlameIcon,
   HashIcon,
+  CompassIcon,
   LayersIcon,
   LettersIcon,
   MoonIcon,
@@ -35,6 +38,7 @@ import {
   SparkleIcon,
   StarIcon,
   SunIcon,
+  SunMoonIcon,
   TrophyIcon,
   UploadIcon,
 } from '../components/icons'
@@ -55,6 +59,8 @@ const badgeIcons = {
   layers: LayersIcon,
   sparkle: SparkleIcon,
   scroll: ScrollIcon,
+  sunmoon: SunMoonIcon,
+  compass: CompassIcon,
 }
 
 export default function ProfilePage() {
@@ -73,6 +79,11 @@ export default function ProfilePage() {
   const masteredVocab = useProgress((s) => s.masteredVocab)
   const masteredNames = useProgress((s) => s.masteredNames)
   const prophetsRead = useProgress((s) => s.prophetsRead)
+  const adhkarSeen = useProgress((s) => s.adhkarSeen)
+  const pillarsIslamSeen = useProgress((s) => s.pillarsIslamSeen)
+  const pillarsFaithSeen = useProgress((s) => s.pillarsFaithSeen)
+  const akhlaqSeen = useProgress((s) => s.akhlaqSeen)
+  const hijriMonthsSeen = useProgress((s) => s.hijriMonthsSeen)
   const resetProgress = useProgress((s) => s.resetProgress)
   const exportProgress = useProgress((s) => s.exportProgress)
   const importProgress = useProgress((s) => s.importProgress)
@@ -101,6 +112,8 @@ export default function ProfilePage() {
     vocab: vocabWords.length,
     names: namesOfAllah.length,
     prophets: prophets.length,
+    adhkar: adhkarItems.length,
+    knowledge: pillarsOfIslam.length + pillarsOfFaith.length + akhlaqLessons.length + hijriMonths.length,
   }
   const badgeProgress = {
     masteredLetters,
@@ -115,6 +128,11 @@ export default function ProfilePage() {
     masteredVocab,
     masteredNames,
     prophetsRead,
+    adhkarSeen,
+    pillarsIslamSeen,
+    pillarsFaithSeen,
+    akhlaqSeen,
+    hijriMonthsSeen,
     streak,
   }
   const unlockedBadges = badgeDefinitions.filter((b) => b.unlocked(badgeProgress, badgeTotals))
@@ -178,6 +196,12 @@ export default function ProfilePage() {
     { label: 'Mots de vocabulaire maîtrisés', value: masteredVocab.length, max: vocabWords.length },
     { label: "Noms d'Allah maîtrisés", value: masteredNames.length, max: namesOfAllah.length },
     { label: 'Récits de prophètes lus', value: prophetsRead.length, max: prophets.length },
+    { label: 'Adhkar consultés', value: adhkarSeen.length, max: adhkarItems.length },
+    {
+      label: 'Connaissances consultées (piliers, akhlâq, calendrier)',
+      value: pillarsIslamSeen.length + pillarsFaithSeen.length + akhlaqSeen.length + hijriMonthsSeen.length,
+      max: pillarsOfIslam.length + pillarsOfFaith.length + akhlaqLessons.length + hijriMonths.length,
+    },
   ]
 
   function handleResetClick() {

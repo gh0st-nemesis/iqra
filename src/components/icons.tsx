@@ -449,6 +449,25 @@ export function CompassIcon(props: IconProps) {
   )
 }
 
+export function MenuIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M3.5 6.5h17" />
+      <path d="M3.5 12h17" />
+      <path d="M3.5 17.5h17" />
+    </svg>
+  )
+}
+
+export function XIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M5.5 5.5l13 13" />
+      <path d="M18.5 5.5l-13 13" />
+    </svg>
+  )
+}
+
 export const moduleIcons: Record<ModuleIconName, (props: IconProps) => JSX.Element> = {
   letters: LettersIcon,
   hash: HashIcon,

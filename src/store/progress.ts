@@ -24,6 +24,11 @@ interface ProgressState {
   masteredNames: string[]
   weakNames: string[]
   prophetsRead: string[]
+  adhkarSeen: string[]
+  pillarsIslamSeen: string[]
+  pillarsFaithSeen: string[]
+  akhlaqSeen: string[]
+  hijriMonthsSeen: string[]
   lastActiveDate: string | null
   streak: number
 
@@ -49,6 +54,11 @@ interface ProgressState {
   markNameMastered: (id: string) => void
   markNameWeak: (id: string) => void
   markProphetRead: (id: string) => void
+  markAdhkarSeen: (id: string) => void
+  markPillarIslamSeen: (id: string) => void
+  markPillarFaithSeen: (id: string) => void
+  markAkhlaqSeen: (id: string) => void
+  markHijriMonthSeen: (id: string) => void
   setReadingLevelCompleted: (level: number) => void
   touchStreak: () => void
   resetProgress: () => void
@@ -79,6 +89,11 @@ const DATA_KEYS = [
   'masteredNames',
   'weakNames',
   'prophetsRead',
+  'adhkarSeen',
+  'pillarsIslamSeen',
+  'pillarsFaithSeen',
+  'akhlaqSeen',
+  'hijriMonthsSeen',
   'lastActiveDate',
   'streak',
 ] as const satisfies readonly (keyof ProgressState)[]
@@ -119,6 +134,11 @@ export const useProgress = create<ProgressState>()(
       masteredNames: [],
       weakNames: [],
       prophetsRead: [],
+      adhkarSeen: [],
+      pillarsIslamSeen: [],
+      pillarsFaithSeen: [],
+      akhlaqSeen: [],
+      hijriMonthsSeen: [],
       lastActiveDate: null,
       streak: 0,
 
@@ -207,6 +227,36 @@ export const useProgress = create<ProgressState>()(
         if (wasNew) get().addXp(5)
       },
 
+      markAdhkarSeen: (id) => {
+        const wasNew = !get().adhkarSeen.includes(id)
+        set({ adhkarSeen: addUnique(get().adhkarSeen, id) })
+        if (wasNew) get().addXp(2)
+      },
+
+      markPillarIslamSeen: (id) => {
+        const wasNew = !get().pillarsIslamSeen.includes(id)
+        set({ pillarsIslamSeen: addUnique(get().pillarsIslamSeen, id) })
+        if (wasNew) get().addXp(3)
+      },
+
+      markPillarFaithSeen: (id) => {
+        const wasNew = !get().pillarsFaithSeen.includes(id)
+        set({ pillarsFaithSeen: addUnique(get().pillarsFaithSeen, id) })
+        if (wasNew) get().addXp(3)
+      },
+
+      markAkhlaqSeen: (id) => {
+        const wasNew = !get().akhlaqSeen.includes(id)
+        set({ akhlaqSeen: addUnique(get().akhlaqSeen, id) })
+        if (wasNew) get().addXp(3)
+      },
+
+      markHijriMonthSeen: (id) => {
+        const wasNew = !get().hijriMonthsSeen.includes(id)
+        set({ hijriMonthsSeen: addUnique(get().hijriMonthsSeen, id) })
+        if (wasNew) get().addXp(2)
+      },
+
       setReadingLevelCompleted: (level) =>
         set({ readingLevelCompleted: Math.max(level, get().readingLevelCompleted) }),
 
@@ -242,6 +292,11 @@ export const useProgress = create<ProgressState>()(
           masteredNames: [],
           weakNames: [],
           prophetsRead: [],
+          adhkarSeen: [],
+          pillarsIslamSeen: [],
+          pillarsFaithSeen: [],
+          akhlaqSeen: [],
+          hijriMonthsSeen: [],
           lastActiveDate: null,
           streak: 0,
         }),

@@ -51,6 +51,8 @@ export interface BadgeTotals {
   vocab: number
   names: number
   prophets: number
+  adhkar: number
+  knowledge: number
 }
 
 export interface BadgeProgressInput {
@@ -66,6 +68,11 @@ export interface BadgeProgressInput {
   masteredVocab: string[]
   masteredNames: string[]
   prophetsRead: string[]
+  adhkarSeen: string[]
+  pillarsIslamSeen: string[]
+  pillarsFaithSeen: string[]
+  akhlaqSeen: string[]
+  hijriMonthsSeen: string[]
   streak: number
 }
 
@@ -88,6 +95,8 @@ export interface BadgeDefinition {
     | 'layers'
     | 'sparkle'
     | 'scroll'
+    | 'sunmoon'
+    | 'compass'
   unlocked: (p: BadgeProgressInput, t: BadgeTotals) => boolean
 }
 
@@ -182,6 +191,22 @@ export const badgeDefinitions: BadgeDefinition[] = [
     description: 'Lire tous les récits des prophètes',
     iconName: 'scroll',
     unlocked: (p, t) => p.prophetsRead.length >= t.prophets,
+  },
+  {
+    id: 'adhkar-master',
+    title: 'Gardien des adhkar',
+    description: 'Consulter toutes les invocations du quotidien',
+    iconName: 'sunmoon',
+    unlocked: (p, t) => p.adhkarSeen.length >= t.adhkar,
+  },
+  {
+    id: 'knowledge-master',
+    title: 'Solides fondations',
+    description: "Parcourir les piliers de l'islam, les piliers de la foi, l'akhlâq et le calendrier hijri",
+    iconName: 'compass',
+    unlocked: (p, t) =>
+      p.pillarsIslamSeen.length + p.pillarsFaithSeen.length + p.akhlaqSeen.length + p.hijriMonthsSeen.length >=
+      t.knowledge,
   },
   {
     id: 'streak-7',

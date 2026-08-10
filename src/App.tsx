@@ -15,6 +15,8 @@ import RevisionPage from './pages/RevisionPage'
 import VocabularyPage from './pages/VocabularyPage'
 import NamesPage from './pages/NamesPage'
 import ProphetsPage from './pages/ProphetsPage'
+import AdhkarPage from './pages/AdhkarPage'
+import KnowledgePage from './pages/KnowledgePage'
 
 export default function App() {
   return (
@@ -33,6 +35,8 @@ export default function App() {
         <Route path="/vocabulaire" element={<VocabularyPage />} />
         <Route path="/noms-d-allah" element={<NamesPage />} />
         <Route path="/prophetes" element={<ProphetsPage />} />
+        <Route path="/adhkar" element={<AdhkarPage />} />
+        <Route path="/connaissances" element={<KnowledgePage />} />
         <Route path="/profil" element={<ProfilePage />} />
         <Route path="/revision" element={<RevisionPage />} />
         <Route path="*" element={<Home />} />

@@ -9,9 +9,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'favicon.ico', 'apple-touch-icon-180x180.png'],
       manifest: {
-        name: "Iqra' — Apprendre l'arabe",
+        name: "Iqra' — Apprendre l'arabe et l'islam",
         short_name: "Iqra'",
-        description: "Apprendre l'arabe de l'alphabet à la récitation coranique",
+        description: "Apprendre l'arabe et l'islam pas à pas : alphabet, lecture, Coran, prière, adhkar et bien plus",
         lang: 'fr',
         start_url: '/',
         display: 'standalone',
@@ -26,7 +26,8 @@ export default defineConfig({
       },
       workbox: {
         // Pré-cache le shell de l'app (JS/CSS/HTML) pour un fonctionnement hors-ligne des modules
-        // statiques (alphabet, chiffres, harakat, ablutions, salat, tajwîd, lecture).
+        // statiques (alphabet, chiffres, harakat, lecture, vocabulaire, tajwîd, ablutions, salat,
+        // noms d'Allah, prophètes, adhkar, connaissances).
         globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2}'],
         runtimeCaching: [
           {
