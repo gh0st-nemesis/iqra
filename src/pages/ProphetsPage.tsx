@@ -1,15 +1,26 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { prophets } from '../data/prophets'
 import { useProgress } from '../store/progress'
 import AudioButton from '../components/AudioButton'
 import McqQuiz, { type McqQuestion } from '../components/McqQuiz'
 import { buildChoices, pickRandom } from '../lib/quiz'
-import { CheckIcon, ChevronDownIcon, ChevronUpIcon, InfoIcon, ScrollIcon, TrophyIcon } from '../components/icons'
+import { usePageTitle } from '../lib/usePageTitle'
+import {
+  CheckIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+  InfoIcon,
+  ScrollIcon,
+  SearchIcon,
+  TrophyIcon,
+} from '../components/icons'
 
 type Tab = 'learn' | 'quiz'
 
 export default function ProphetsPage() {
+  usePageTitle('Les prophètes')
   const [tab, setTab] = useState<Tab>('learn')
+  const [query, setQuery] = useState('')
   const prophetsRead = useProgress((s) => s.prophetsRead)
   const markProphetRead = useProgress((s) => s.markProphetRead)
   const [openId, setOpenId] = useState<string | null>(prophets[0].id)
@@ -18,6 +29,14 @@ export default function ProphetsPage() {
     if (openId) markProphetRead(openId)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openId])
+
+  const visibleProphets = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    if (!q) return prophets
+    return prophets.filter(
+      (p) => p.name.toLowerCase().includes(q) || p.arabicName.includes(q) || p.summary.toLowerCase().includes(q),
+    )
+  }, [query])
 
   const [quizQuestions] = useState<McqQuestion[]>(() =>
     pickRandom(prophets, Math.min(8, prophets.length)).map((p) => ({
@@ -75,8 +94,24 @@ export default function ProphetsPage() {
             </span>
           </div>
 
+          <div className="relative mb-4">
+            <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-400 dark:text-slate-500" />
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Rechercher un prophète…"
+              className="w-full rounded-xl border border-brand-100 bg-white py-2 pl-9 pr-3 text-sm text-brand-800 outline-none transition focus:border-brand-400 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+            />
+          </div>
+
+          {visibleProphets.length === 0 ? (
+            <p className="rounded-2xl border border-dashed border-brand-200 bg-white p-6 text-center text-sm text-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400">
+              Aucun prophète ne correspond à « {query} ».
+            </p>
+          ) : (
           <div className="space-y-3">
-            {prophets.map((p) => {
+            {visibleProphets.map((p) => {
               const isOpen = openId === p.id
               const isRead = prophetsRead.includes(p.id)
               return (
@@ -137,6 +172,7 @@ export default function ProphetsPage() {
               )
             })}
           </div>
+          )}
         </>
       )}
 

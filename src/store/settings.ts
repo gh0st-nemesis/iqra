@@ -26,8 +26,10 @@ function applyTextScale(scale: TextScale) {
 interface SettingsState {
   textScale: TextScale
   notificationsEnabled: boolean
+  sidebarCollapsed: boolean
   setTextScale: (scale: TextScale) => void
   setNotificationsEnabled: (enabled: boolean) => void
+  setSidebarCollapsed: (collapsed: boolean) => void
 }
 
 export const useSettings = create<SettingsState>()(
@@ -35,11 +37,13 @@ export const useSettings = create<SettingsState>()(
     (set) => ({
       textScale: 'normal',
       notificationsEnabled: false,
+      sidebarCollapsed: false,
       setTextScale: (scale) => {
         applyTextScale(scale)
         set({ textScale: scale })
       },
       setNotificationsEnabled: (enabled) => set({ notificationsEnabled: enabled }),
+      setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
     }),
     {
       name: 'iqra-settings',

@@ -4,12 +4,15 @@ import { useProgress } from '../store/progress'
 import AudioButton from '../components/AudioButton'
 import McqQuiz, { type McqQuestion } from '../components/McqQuiz'
 import { buildChoices, pickRandom } from '../lib/quiz'
-import { InfoIcon, SparkleIcon, StarIcon, TrophyIcon } from '../components/icons'
+import { usePageTitle } from '../lib/usePageTitle'
+import { InfoIcon, SearchIcon, SparkleIcon, StarIcon, TrophyIcon } from '../components/icons'
 
 type Tab = 'learn' | 'quiz'
 
 export default function NamesPage() {
+  usePageTitle("Noms d'Allah")
   const [tab, setTab] = useState<Tab>('learn')
+  const [query, setQuery] = useState('')
   const masteredNames = useProgress((s) => s.masteredNames)
   const markNameMastered = useProgress((s) => s.markNameMastered)
   const markNameWeak = useProgress((s) => s.markNameWeak)
@@ -18,6 +21,14 @@ export default function NamesPage() {
     () => namesOfAllah.filter((n) => masteredNames.includes(n.id)).length,
     [masteredNames],
   )
+
+  const visibleNames = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    if (!q) return namesOfAllah
+    return namesOfAllah.filter(
+      (n) => n.transliteration.toLowerCase().includes(q) || n.meaning.toLowerCase().includes(q) || n.arabic.includes(q),
+    )
+  }, [query])
 
   const [quizQuestions] = useState<McqQuestion[]>(() =>
     pickRandom(namesOfAllah, 10).map((n) => ({
@@ -76,8 +87,24 @@ export default function NamesPage() {
             </span>
           </div>
 
+          <div className="relative mb-4">
+            <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-400 dark:text-slate-500" />
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Rechercher un nom (translittération ou sens)…"
+              className="w-full rounded-xl border border-brand-100 bg-white py-2 pl-9 pr-3 text-sm text-brand-800 outline-none transition focus:border-brand-400 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+            />
+          </div>
+
+          {visibleNames.length === 0 ? (
+            <p className="rounded-2xl border border-dashed border-brand-200 bg-white p-6 text-center text-sm text-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400">
+              Aucun nom ne correspond à « {query} ».
+            </p>
+          ) : (
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {namesOfAllah.map((n) => {
+            {visibleNames.map((n) => {
               const isMastered = masteredNames.includes(n.id)
               return (
                 <div
@@ -109,6 +136,7 @@ export default function NamesPage() {
               )
             })}
           </div>
+          )}
         </>
       )}
 

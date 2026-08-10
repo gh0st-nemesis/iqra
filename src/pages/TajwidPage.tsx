@@ -4,6 +4,7 @@ import { useProgress } from '../store/progress'
 import AudioButton from '../components/AudioButton'
 import McqQuiz, { type McqQuestion } from '../components/McqQuiz'
 import { buildChoices, pickRandom } from '../lib/quiz'
+import { usePageTitle } from '../lib/usePageTitle'
 import {
   CheckIcon,
   ChevronDownIcon,
@@ -17,6 +18,7 @@ import {
 type Tab = 'learn' | 'quiz'
 
 export default function TajwidPage() {
+  usePageTitle('Tajwîd')
   const [tab, setTab] = useState<Tab>('learn')
   const tajwidRulesSeen = useProgress((s) => s.tajwidRulesSeen)
   const markTajwidRuleSeen = useProgress((s) => s.markTajwidRuleSeen)

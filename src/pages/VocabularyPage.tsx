@@ -5,12 +5,14 @@ import { useProgress } from '../store/progress'
 import AudioButton from '../components/AudioButton'
 import McqQuiz, { type McqQuestion } from '../components/McqQuiz'
 import { buildChoices, pickRandom } from '../lib/quiz'
+import { usePageTitle } from '../lib/usePageTitle'
 import { LayersIcon, StarIcon, TrophyIcon } from '../components/icons'
 
 type Tab = 'learn' | 'quiz'
 type CategoryFilter = 'all' | VocabCategory
 
 export default function VocabularyPage() {
+  usePageTitle('Vocabulaire')
   const [tab, setTab] = useState<Tab>('learn')
   const [filter, setFilter] = useState<CategoryFilter>('all')
   const masteredVocab = useProgress((s) => s.masteredVocab)

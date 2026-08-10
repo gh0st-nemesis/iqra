@@ -144,7 +144,17 @@ export type ModuleIconName =
 
 // --- Vocabulaire ---
 
-export type VocabCategory = 'salutations' | 'famille' | 'maison' | 'couleurs' | 'phrases' | 'racines'
+export type VocabCategory =
+  | 'salutations'
+  | 'famille'
+  | 'maison'
+  | 'couleurs'
+  | 'phrases'
+  | 'racines'
+  | 'corps'
+  | 'nourriture'
+  | 'temps'
+  | 'ecole'
 
 export interface VocabWord {
   id: string

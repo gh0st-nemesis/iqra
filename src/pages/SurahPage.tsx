@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { fetchSurahDetail, type SurahDetail } from '../lib/quranApi'
 import { useProgress } from '../store/progress'
+import { usePageTitle } from '../lib/usePageTitle'
 import { AlertTriangleIcon, ArrowLeftIcon, BookmarkIcon, CheckIcon, PlayIcon, Volume2Icon } from '../components/icons'
 
 export default function SurahPage() {
@@ -9,6 +10,7 @@ export default function SurahPage() {
   const surahNumber = Number(number)
 
   const [surah, setSurah] = useState<SurahDetail | null>(null)
+  usePageTitle(surah ? `Sourate ${surah.englishName}` : 'Récitation coranique')
   const [error, setError] = useState<string | null>(null)
   const [playingVerse, setPlayingVerse] = useState<number | null>(null)
   const [autoPlay, setAutoPlay] = useState(false)

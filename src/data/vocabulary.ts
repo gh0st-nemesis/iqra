@@ -5,6 +5,10 @@ export const vocabCategories: { id: VocabCategory; label: string }[] = [
   { id: 'famille', label: 'Famille' },
   { id: 'maison', label: 'Maison' },
   { id: 'couleurs', label: 'Couleurs' },
+  { id: 'corps', label: 'Corps humain' },
+  { id: 'nourriture', label: 'Nourriture' },
+  { id: 'temps', label: 'Temps et météo' },
+  { id: 'ecole', label: 'École' },
   { id: 'phrases', label: 'Phrases simples' },
   { id: 'racines', label: 'Familles de mots' },
 ]
@@ -55,6 +59,46 @@ export const vocabWords: VocabWord[] = [
   { id: 'v-aswad', category: 'couleurs', arabic: 'أَسْوَدُ', transliteration: 'Aswad', meaning: 'Noir' },
   { id: 'v-bunni', category: 'couleurs', arabic: 'بُنِّيٌّ', transliteration: 'Bunnī', meaning: 'Marron' },
   { id: 'v-wardi', category: 'couleurs', arabic: 'وَرْدِيٌّ', transliteration: 'Wardī', meaning: 'Rose' },
+
+  // --- Corps humain ---
+  { id: 'v-c-ras', category: 'corps', arabic: 'رَأْسٌ', transliteration: 'Raʾs', meaning: 'Tête' },
+  { id: 'v-c-ayn', category: 'corps', arabic: 'عَيْنٌ', transliteration: 'ʿAyn', meaning: 'Œil' },
+  { id: 'v-c-yad', category: 'corps', arabic: 'يَدٌ', transliteration: 'Yad', meaning: 'Main' },
+  { id: 'v-c-rijl', category: 'corps', arabic: 'رِجْلٌ', transliteration: 'Rijl', meaning: 'Pied, jambe' },
+  { id: 'v-c-fam', category: 'corps', arabic: 'فَمٌ', transliteration: 'Fam', meaning: 'Bouche' },
+  { id: 'v-c-anf', category: 'corps', arabic: 'أَنْفٌ', transliteration: 'Anf', meaning: 'Nez' },
+  { id: 'v-c-udhun', category: 'corps', arabic: 'أُذُنٌ', transliteration: 'Udhun', meaning: 'Oreille' },
+  { id: 'v-c-qalb', category: 'corps', arabic: 'قَلْبٌ', transliteration: 'Qalb', meaning: 'Cœur' },
+
+  // --- Nourriture ---
+  { id: 'v-n-khubz', category: 'nourriture', arabic: 'خُبْزٌ', transliteration: 'Khubz', meaning: 'Pain' },
+  { id: 'v-n-maa', category: 'nourriture', arabic: 'مَاءٌ', transliteration: 'Māʾ', meaning: 'Eau' },
+  { id: 'v-n-tamr', category: 'nourriture', arabic: 'تَمْرٌ', transliteration: 'Tamr', meaning: 'Datte' },
+  { id: 'v-n-lahm', category: 'nourriture', arabic: 'لَحْمٌ', transliteration: 'Laḥm', meaning: 'Viande' },
+  { id: 'v-n-fakiha', category: 'nourriture', arabic: 'فَاكِهَةٌ', transliteration: 'Fākiha', meaning: 'Fruit' },
+  { id: 'v-n-asal', category: 'nourriture', arabic: 'عَسَلٌ', transliteration: 'ʿAsal', meaning: 'Miel' },
+  { id: 'v-n-halib', category: 'nourriture', arabic: 'حَلِيبٌ', transliteration: 'Ḥalīb', meaning: 'Lait' },
+  { id: 'v-n-aruzz', category: 'nourriture', arabic: 'أَرُزٌّ', transliteration: 'Aruzz', meaning: 'Riz' },
+
+  // --- Temps et météo ---
+  { id: 'v-t-yawm', category: 'temps', arabic: 'يَوْمٌ', transliteration: 'Yawm', meaning: 'Jour' },
+  { id: 'v-t-layl', category: 'temps', arabic: 'لَيْلٌ', transliteration: 'Layl', meaning: 'Nuit' },
+  { id: 'v-t-usbu', category: 'temps', arabic: 'أُسْبُوعٌ', transliteration: "Usbūʿ", meaning: 'Semaine' },
+  { id: 'v-t-matar', category: 'temps', arabic: 'مَطَرٌ', transliteration: 'Maṭar', meaning: 'Pluie' },
+  { id: 'v-t-rih', category: 'temps', arabic: 'رِيحٌ', transliteration: 'Rīḥ', meaning: 'Vent' },
+  { id: 'v-t-sayf', category: 'temps', arabic: 'صَيْفٌ', transliteration: 'Ṣayf', meaning: 'Été' },
+  { id: 'v-t-shita', category: 'temps', arabic: 'شِتَاءٌ', transliteration: "Shitāʾ", meaning: 'Hiver' },
+  { id: 'v-t-alyawm', category: 'temps', arabic: 'الْيَوْمَ', transliteration: 'Al-yawm', meaning: "Aujourd'hui" },
+
+  // --- École ---
+  { id: 'v-e-madrasa', category: 'ecole', arabic: 'مَدْرَسَةٌ', transliteration: 'Madrasa', meaning: 'École' },
+  { id: 'v-e-muallim', category: 'ecole', arabic: 'مُعَلِّمٌ', transliteration: "Muʿallim", meaning: 'Enseignant' },
+  { id: 'v-e-talib', category: 'ecole', arabic: 'طَالِبٌ', transliteration: 'Ṭālib', meaning: 'Élève' },
+  { id: 'v-e-daftar', category: 'ecole', arabic: 'دَفْتَرٌ', transliteration: 'Daftar', meaning: 'Cahier' },
+  { id: 'v-e-sabbura', category: 'ecole', arabic: 'سَبُّورَةٌ', transliteration: 'Sabbūra', meaning: 'Tableau' },
+  { id: 'v-e-haqiba', category: 'ecole', arabic: 'حَقِيبَةٌ', transliteration: "Ḥaqība", meaning: 'Sac, cartable' },
+  { id: 'v-e-dars', category: 'ecole', arabic: 'دَرْسٌ', transliteration: 'Dars', meaning: 'Leçon' },
+  { id: 'v-e-wajib', category: 'ecole', arabic: 'وَاجِبٌ', transliteration: 'Wājib', meaning: 'Devoir' },
 
   // --- Phrases simples ---
   { id: 'v-ph-name', category: 'phrases', arabic: 'مَا اسْمُكَ؟', transliteration: "Mā smuka?", meaning: 'Comment tu t\'appelles ?' },

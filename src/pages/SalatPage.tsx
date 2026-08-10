@@ -4,9 +4,11 @@ import { dailyPrayers, postureLabels, prayerSteps } from '../data/salat'
 import { useProgress } from '../store/progress'
 import RealPhoto from '../components/RealPhoto'
 import DuaCard from '../components/DuaCard'
+import { usePageTitle } from '../lib/usePageTitle'
 import { BookOpenIcon, PrayerFigureIcon, RepeatIcon } from '../components/icons'
 
 export default function SalatPage() {
+  usePageTitle('La Salat')
   const prayerStepsSeen = useProgress((s) => s.prayerStepsSeen)
   const markPrayerStepSeen = useProgress((s) => s.markPrayerStepSeen)
 

@@ -16,6 +16,7 @@ import { useTheme } from '../store/theme'
 import { useSettings, TEXT_SCALE_LABELS, type TextScale } from '../store/settings'
 import { requestNotificationPermission, cancelStreakReminder, isNotificationSupported } from '../lib/notifications'
 import { getLevelInfo, badgeDefinitions } from '../lib/gamification'
+import { usePageTitle } from '../lib/usePageTitle'
 import {
   AlertTriangleIcon,
   BellIcon,
@@ -64,6 +65,7 @@ const badgeIcons = {
 }
 
 export default function ProfilePage() {
+  usePageTitle('Profil')
   const xp = useProgress((s) => s.xp)
   const streak = useProgress((s) => s.streak)
   const masteredLetters = useProgress((s) => s.masteredLetters)
@@ -95,6 +97,8 @@ export default function ProfilePage() {
   const setTextScale = useSettings((s) => s.setTextScale)
   const notificationsEnabled = useSettings((s) => s.notificationsEnabled)
   const setNotificationsEnabled = useSettings((s) => s.setNotificationsEnabled)
+  const sidebarCollapsed = useSettings((s) => s.sidebarCollapsed)
+  const setSidebarCollapsed = useSettings((s) => s.setSidebarCollapsed)
 
   const [confirmingReset, setConfirmingReset] = useState(false)
   const [importMessage, setImportMessage] = useState<{ ok: boolean; text: string } | null>(null)
@@ -340,6 +344,28 @@ export default function ProfilePage() {
               {TEXT_SCALE_LABELS[scale]}
             </button>
           ))}
+        </div>
+
+        <h3 className="mb-2 mt-5 text-xs font-bold uppercase tracking-wide text-brand-500 dark:text-slate-400">
+          Menu latéral (écrans larges)
+        </h3>
+        <div className="flex gap-2 rounded-full bg-brand-100 p-1 dark:bg-slate-700">
+          <button
+            onClick={() => setSidebarCollapsed(false)}
+            className={`flex flex-1 items-center justify-center gap-1.5 rounded-full py-2 text-sm font-semibold transition ${
+              !sidebarCollapsed ? 'bg-white text-brand-700 shadow-sm dark:bg-slate-800 dark:text-slate-100' : 'text-brand-500 dark:text-slate-300'
+            }`}
+          >
+            Étendu
+          </button>
+          <button
+            onClick={() => setSidebarCollapsed(true)}
+            className={`flex flex-1 items-center justify-center gap-1.5 rounded-full py-2 text-sm font-semibold transition ${
+              sidebarCollapsed ? 'bg-white text-brand-700 shadow-sm dark:bg-slate-800 dark:text-slate-100' : 'text-brand-500 dark:text-slate-300'
+            }`}
+          >
+            Réduit (icônes)
+          </button>
         </div>
       </section>
 

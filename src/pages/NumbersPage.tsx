@@ -4,11 +4,13 @@ import { useProgress } from '../store/progress'
 import AudioButton from '../components/AudioButton'
 import McqQuiz, { type McqQuestion } from '../components/McqQuiz'
 import { buildChoices, pickRandom } from '../lib/quiz'
+import { usePageTitle } from '../lib/usePageTitle'
 import { HashIcon, InfoIcon, StarIcon, TrophyIcon } from '../components/icons'
 
 type Tab = 'learn' | 'quiz'
 
 export default function NumbersPage() {
+  usePageTitle('Chiffres')
   const [tab, setTab] = useState<Tab>('learn')
   const [selectedId, setSelectedId] = useState(numbers[0].id)
   const masteredNumbers = useProgress((s) => s.masteredNumbers)
@@ -87,7 +89,7 @@ export default function NumbersPage() {
                   <button
                     key={n.id}
                     onClick={() => setSelectedId(n.id)}
-                    className={`relative flex aspect-square flex-col items-center justify-center rounded-xl border-2 font-arabic text-3xl transition ${
+                    className={`relative flex aspect-square flex-col items-center justify-center rounded-xl border-2 font-arabic text-2xl transition sm:text-3xl ${
                       isSelected
                         ? 'border-brand-600 bg-brand-50 dark:bg-slate-700/50 text-brand-800 dark:text-slate-100'
                         : 'border-brand-100 dark:border-slate-700 bg-white dark:bg-slate-800 text-brand-700 dark:text-slate-200 hover:border-brand-300'

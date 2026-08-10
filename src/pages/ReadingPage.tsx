@@ -5,6 +5,7 @@ import { useProgress } from '../store/progress'
 import AudioButton from '../components/AudioButton'
 import WordExerciseFlow from '../components/WordExerciseFlow'
 import { pickRandom } from '../lib/quiz'
+import { usePageTitle } from '../lib/usePageTitle'
 import { BookOpenIcon, CheckIcon, TrophyIcon } from '../components/icons'
 
 const shortHarakat = [
@@ -20,6 +21,7 @@ const EXERCISE_SET_SIZE = 6
 type Tab = 'learn' | 'exercises'
 
 export default function ReadingPage() {
+  usePageTitle('Lecture')
   const [tab, setTab] = useState<Tab>('learn')
   const [letterId, setLetterId] = useState(connectingLetters[0].id)
   const [harakaId, setHarakaId] = useState(shortHarakat[0].id)

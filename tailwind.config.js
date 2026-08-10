@@ -4,6 +4,11 @@ export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      screens: {
+        // Point de repère supplémentaire entre les très petits téléphones et `sm` (640px),
+        // utile pour desserrer les grilles de tuiles (lettres, chiffres) sur petit écran.
+        xs: '420px',
+      },
       fontFamily: {
         arabic: ['"Noto Naskh Arabic"', '"Amiri"', 'serif'],
         arabicDisplay: ['"Amiri"', '"Noto Naskh Arabic"', 'serif'],

@@ -3,9 +3,11 @@ import { adhkarCategories, adhkarItems } from '../data/adhkar'
 import type { AdhkarCategory } from '../types'
 import { useProgress } from '../store/progress'
 import DuaCard from '../components/DuaCard'
+import { usePageTitle } from '../lib/usePageTitle'
 import { BookmarkIcon, SunMoonIcon } from '../components/icons'
 
 export default function AdhkarPage() {
+  usePageTitle('Adhkar')
   const [category, setCategory] = useState<AdhkarCategory>('matin')
   const adhkarSeen = useProgress((s) => s.adhkarSeen)
   const markAdhkarSeen = useProgress((s) => s.markAdhkarSeen)

@@ -4,11 +4,13 @@ import { useProgress } from '../store/progress'
 import { TayammumIllustration } from '../components/PostureIllustration'
 import RealPhoto from '../components/RealPhoto'
 import DuaCard from '../components/DuaCard'
+import { usePageTitle } from '../lib/usePageTitle'
 import { DropletIcon, InfoIcon, RepeatIcon } from '../components/icons'
 
 type Tab = 'wudu' | 'tayammum'
 
 export default function AblutionsPage() {
+  usePageTitle('Ablutions')
   const [tab, setTab] = useState<Tab>('wudu')
   const wuduStepsSeen = useProgress((s) => s.wuduStepsSeen)
   const tayammumStepsSeen = useProgress((s) => s.tayammumStepsSeen)

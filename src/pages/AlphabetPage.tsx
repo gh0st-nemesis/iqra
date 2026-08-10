@@ -4,11 +4,13 @@ import { useProgress } from '../store/progress'
 import AudioButton from '../components/AudioButton'
 import McqQuiz, { type McqQuestion } from '../components/McqQuiz'
 import { buildChoices, pickRandom } from '../lib/quiz'
+import { usePageTitle } from '../lib/usePageTitle'
 import { InfoIcon, LettersIcon, StarIcon, TagIcon, TrophyIcon } from '../components/icons'
 
 type Tab = 'learn' | 'quiz'
 
 export default function AlphabetPage() {
+  usePageTitle('Alphabet')
   const [tab, setTab] = useState<Tab>('learn')
   const [selectedId, setSelectedId] = useState(alphabet[0].id)
   const masteredLetters = useProgress((s) => s.masteredLetters)
@@ -78,7 +80,7 @@ export default function AlphabetPage() {
 
       {tab === 'learn' && (
         <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
-          <div className="grid grid-cols-4 gap-2 sm:grid-cols-6 md:grid-cols-7">
+          <div className="grid grid-cols-3 gap-2 xs:grid-cols-4 sm:grid-cols-6 md:grid-cols-7">
             {alphabet.map((letter) => {
               const isMastered = masteredLetters.includes(letter.id)
               const isSelected = letter.id === selectedId
@@ -86,7 +88,7 @@ export default function AlphabetPage() {
                 <button
                   key={letter.id}
                   onClick={() => selectLetter(letter.id)}
-                  className={`relative flex aspect-square flex-col items-center justify-center rounded-xl border-2 font-arabic text-3xl transition ${
+                  className={`relative flex aspect-square flex-col items-center justify-center rounded-xl border-2 font-arabic text-2xl transition sm:text-3xl ${
                     isSelected
                       ? 'border-brand-600 bg-brand-50 dark:bg-slate-700/50 text-brand-800 dark:text-slate-100'
                       : 'border-brand-100 dark:border-slate-700 bg-white dark:bg-slate-800 text-brand-700 dark:text-slate-200 hover:border-brand-300'

@@ -4,6 +4,7 @@ import { useProgress } from '../store/progress'
 import AudioButton from '../components/AudioButton'
 import McqQuiz, { type McqQuestion } from '../components/McqQuiz'
 import { buildChoices, pickRandom } from '../lib/quiz'
+import { usePageTitle } from '../lib/usePageTitle'
 import { PenIcon, TrophyIcon } from '../components/icons'
 
 const categoryLabels: Record<string, string> = {
@@ -14,6 +15,7 @@ const categoryLabels: Record<string, string> = {
 }
 
 export default function HarakatPage() {
+  usePageTitle('Voyelles (Harakat)')
   const [tab, setTab] = useState<'learn' | 'quiz'>('learn')
   const markHarakaSeen = useProgress((s) => s.markHarakaSeen)
   const learnedHarakat = useProgress((s) => s.learnedHarakat)

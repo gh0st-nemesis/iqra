@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { fetchSurahList, JUZ_AMMA_RANGE, type SurahMeta } from '../lib/quranApi'
 import { useProgress } from '../store/progress'
+import { usePageTitle } from '../lib/usePageTitle'
 import {
   AlertTriangleIcon,
   BookmarkIcon,
@@ -14,6 +15,7 @@ import {
 type Tab = 'surahs' | 'memorization'
 
 export default function QuranPage() {
+  usePageTitle('Récitation coranique')
   const [tab, setTab] = useState<Tab>('surahs')
   const [surahs, setSurahs] = useState<SurahMeta[] | null>(null)
   const [error, setError] = useState<string | null>(null)

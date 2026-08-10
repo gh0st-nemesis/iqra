@@ -8,6 +8,7 @@ import { namesOfAllah } from '../data/namesOfAllah'
 import { useProgress } from '../store/progress'
 import McqQuiz, { type McqQuestion } from '../components/McqQuiz'
 import { buildChoices, shuffle } from '../lib/quiz'
+import { usePageTitle } from '../lib/usePageTitle'
 import { CheckCircleIcon, RefreshIcon, TrophyIcon } from '../components/icons'
 
 const MAX_QUESTIONS = 15
@@ -96,6 +97,7 @@ function buildQuestions(
 }
 
 export default function RevisionPage() {
+  usePageTitle('Révision')
   const weakLetters = useProgress((s) => s.weakLetters)
   const weakNumbers = useProgress((s) => s.weakNumbers)
   const weakHarakat = useProgress((s) => s.weakHarakat)
