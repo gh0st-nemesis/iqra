@@ -1,8 +1,10 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { modules } from '../data/modules'
-import { useProgress } from '../store/progress'
+import { useProgress, todayISO } from '../store/progress'
 import { useTheme } from '../store/theme'
+import { useSettings } from '../store/settings'
+import { scheduleStreakReminder } from '../lib/notifications'
 import { FlameIcon, HomeIcon, MoonIcon, SettingsIcon, StarIcon, SunIcon, moduleIcons } from './icons'
 
 export default function Layout() {
@@ -11,10 +13,25 @@ export default function Layout() {
   const touchStreak = useProgress((s) => s.touchStreak)
   const theme = useTheme((s) => s.theme)
   const toggleTheme = useTheme((s) => s.toggleTheme)
+  const notificationsEnabled = useSettings((s) => s.notificationsEnabled)
+
+  const [streakToast, setStreakToast] = useState(false)
 
   useEffect(() => {
+    const wasAlreadyToday = useProgress.getState().lastActiveDate === todayISO()
     touchStreak()
+    if (!wasAlreadyToday) {
+      setStreakToast(true)
+      const t = setTimeout(() => setStreakToast(false), 4000)
+      return () => clearTimeout(t)
+    }
   }, [touchStreak])
+
+  useEffect(() => {
+    if (notificationsEnabled) {
+      scheduleStreakReminder(() => useProgress.getState().lastActiveDate === todayISO())
+    }
+  }, [notificationsEnabled])
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -90,6 +107,17 @@ export default function Layout() {
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6">
         <Outlet />
       </main>
+      <div
+        role="status"
+        aria-live="polite"
+        className={`pointer-events-none fixed inset-x-0 bottom-4 z-30 flex justify-center px-4 transition-all duration-500 ${
+          streakToast ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+        }`}
+      >
+        <span className="flex items-center gap-2 rounded-full bg-brand-800 px-4 py-2 text-sm font-semibold text-white shadow-lg dark:bg-slate-700">
+          <FlameIcon className="h-4 w-4 text-sand-300" /> Série de {streak} jour{streak > 1 ? 's' : ''} — continue comme ça !
+        </span>
+      </div>
       <footer className="border-t border-brand-100 py-4 text-center text-xs text-brand-400 dark:border-slate-800 dark:text-slate-500">
         Iqra&apos; · Un parcours pas à pas de l&apos;alphabet à la récitation coranique
       </footer>

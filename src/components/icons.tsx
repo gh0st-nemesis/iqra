@@ -365,6 +365,35 @@ export function TagIcon(props: IconProps) {
   )
 }
 
+export function BellIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M6 17v-5.5a6 6 0 0 1 12 0V17l1.8 2.5H4.2Z" strokeLinejoin="round" />
+      <path d="M10 20.5a2 2 0 0 0 4 0" />
+    </svg>
+  )
+}
+
+export function DownloadIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M12 3.5v11" />
+      <path d="M7.5 10 12 14.5 16.5 10" />
+      <path d="M4.5 17v2.5a1 1 0 0 0 1 1h13a1 1 0 0 0 1-1V17" />
+    </svg>
+  )
+}
+
+export function UploadIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M12 14.5v-11" />
+      <path d="M7.5 7.5 12 3l4.5 4.5" />
+      <path d="M4.5 17v2.5a1 1 0 0 0 1 1h13a1 1 0 0 0 1-1V17" />
+    </svg>
+  )
+}
+
 export const moduleIcons: Record<ModuleIconName, (props: IconProps) => JSX.Element> = {
   letters: LettersIcon,
   hash: HashIcon,

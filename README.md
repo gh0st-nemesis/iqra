@@ -17,6 +17,7 @@ Autres commandes :
 npm run build    # build de production (dist/)
 npm run preview  # prévisualiser le build
 npm run lint     # vérifier le code
+npm run test     # lancer les tests (vitest)
 ```
 
 ## Modules
@@ -34,7 +35,15 @@ npm run lint     # vérifier le code
 
 Transverse :
 - **Révision** (`/revision`) — quiz ciblé sur les lettres/chiffres/harakat où l'utilisateur s'est trompé récemment (accessible depuis le bandeau d'accueil quand il y a des points à réviser)
-- **Profil** (`/profil`) — récapitulatif de la progression, bascule clair/sombre, réinitialisation de la progression
+- **Profil** (`/profil`) — récapitulatif de la progression, niveaux et badges, réglages d'apparence (thème, taille du texte), rappels de série, export/import de la sauvegarde, réinitialisation de la progression
+
+## Gamification, PWA et accessibilité
+
+- **Niveaux & badges** (`src/lib/gamification.ts`) — paliers dérivés de l'XP total et badges de jalons (alphabet maîtrisé, série de 7/30 jours, versets mémorisés…), affichés dans le Profil
+- **Sauvegarde exportable** — bouton Exporter/Importer dans le Profil (fichier JSON), utile pour changer d'appareil vu que la progression est en `localStorage` uniquement
+- **Rappels de série** — notification navigateur optionnelle (`src/lib/notifications.ts`) en soirée si aucune activité n'a eu lieu ; limité à la durée de vie de l'onglet ouvert (pas de Push API serveur)
+- **PWA** — installable, avec mise en cache hors-ligne du shell de l'app et des sourates/audio déjà consultés (`vite-plugin-pwa`, voir `vite.config.ts`)
+- **Taille du texte** — réglage Normal/Grande/Très grande dans le Profil (`src/store/settings.ts`), applique une échelle globale via `font-size` sur `<html>`
 
 ## Stack technique
 
@@ -59,6 +68,6 @@ src/
 ## Pistes d'amélioration restantes
 
 - Sourates au-delà d'Al-Fâtiha reliées depuis le module Salat
-- Mode hors-ligne pour le module Coran (l'audio nécessite Internet)
-- Profils multiples (actuellement une seule progression par appareil/navigateur)
-- Tests automatisés (aucun actuellement, notamment sur `src/lib/arabic.ts`)
+- Profils multiples (actuellement une seule progression par appareil/navigateur — l'export/import JSON permet un contournement manuel)
+- Élargir la couverture de tests au-delà de `src/lib/arabic.ts` (store, composants)
+- Icônes PWA générées automatiquement à partir du favicon (`@vite-pwa/assets-generator`) — à remplacer par un vrai visuel si besoin d'une identité plus travaillée

@@ -42,9 +42,33 @@ interface ProgressState {
   setReadingLevelCompleted: (level: number) => void
   touchStreak: () => void
   resetProgress: () => void
+  exportProgress: () => string
+  importProgress: (json: string) => boolean
 }
 
-function todayISO() {
+// Clés de données exportées/importées (tout sauf les fonctions d'action).
+const DATA_KEYS = [
+  'xp',
+  'learnedLetters',
+  'masteredLetters',
+  'masteredNumbers',
+  'learnedHarakat',
+  'tajwidRulesSeen',
+  'quranVersesListened',
+  'memorizedVerses',
+  'wordsRead',
+  'readingLevelCompleted',
+  'wuduStepsSeen',
+  'tayammumStepsSeen',
+  'prayerStepsSeen',
+  'weakLetters',
+  'weakNumbers',
+  'weakHarakat',
+  'lastActiveDate',
+  'streak',
+] as const satisfies readonly (keyof ProgressState)[]
+
+export function todayISO() {
   return new Date().toISOString().slice(0, 10)
 }
 
@@ -176,6 +200,33 @@ export const useProgress = create<ProgressState>()(
           lastActiveDate: null,
           streak: 0,
         }),
+
+      exportProgress: () => {
+        const state = get()
+        const data = Object.fromEntries(DATA_KEYS.map((key) => [key, state[key]]))
+        return JSON.stringify({ app: 'iqra', version: 1, exportedAt: new Date().toISOString(), data }, null, 2)
+      },
+
+      importProgress: (json) => {
+        try {
+          const parsed = JSON.parse(json)
+          const data = parsed && typeof parsed === 'object' && 'data' in parsed ? parsed.data : parsed
+          if (!data || typeof data !== 'object') return false
+          const patch: Partial<ProgressState> = {}
+          let foundAny = false
+          for (const key of DATA_KEYS) {
+            if (key in data) {
+              patch[key] = data[key]
+              foundAny = true
+            }
+          }
+          if (!foundAny) return false
+          set(patch)
+          return true
+        } catch {
+          return false
+        }
+      },
     }),
     { name: 'iqra-progress' },
   ),
