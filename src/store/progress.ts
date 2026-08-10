@@ -1,0 +1,182 @@
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
+import type { MemorizedVerse } from '../types'
+
+interface ProgressState {
+  xp: number
+  learnedLetters: string[]
+  masteredLetters: string[]
+  masteredNumbers: string[]
+  learnedHarakat: string[]
+  tajwidRulesSeen: string[]
+  quranVersesListened: string[]
+  memorizedVerses: MemorizedVerse[]
+  wordsRead: string[]
+  readingLevelCompleted: number
+  wuduStepsSeen: string[]
+  tayammumStepsSeen: string[]
+  prayerStepsSeen: string[]
+  weakLetters: string[]
+  weakNumbers: string[]
+  weakHarakat: string[]
+  lastActiveDate: string | null
+  streak: number
+
+  addXp: (amount: number) => void
+  markLetterSeen: (id: string) => void
+  markLetterMastered: (id: string) => void
+  markNumberMastered: (id: string) => void
+  markHarakaSeen: (id: string) => void
+  markTajwidRuleSeen: (id: string) => void
+  markVerseListened: (key: string) => void
+  markVerseMemorized: (verse: MemorizedVerse) => void
+  unmarkVerseMemorized: (key: string) => void
+  markWordRead: (id: string) => void
+  markWuduStepSeen: (id: string) => void
+  markTayammumStepSeen: (id: string) => void
+  markPrayerStepSeen: (id: string) => void
+  markLetterWeak: (id: string) => void
+  markNumberWeak: (id: string) => void
+  markHarakaWeak: (id: string) => void
+  clearHarakaWeak: (id: string) => void
+  setReadingLevelCompleted: (level: number) => void
+  touchStreak: () => void
+  resetProgress: () => void
+}
+
+function todayISO() {
+  return new Date().toISOString().slice(0, 10)
+}
+
+function addUnique<T>(list: T[], item: T) {
+  return list.includes(item) ? list : [...list, item]
+}
+
+function removeItem<T>(list: T[], item: T) {
+  return list.filter((x) => x !== item)
+}
+
+export const useProgress = create<ProgressState>()(
+  persist(
+    (set, get) => ({
+      xp: 0,
+      learnedLetters: [],
+      masteredLetters: [],
+      masteredNumbers: [],
+      learnedHarakat: [],
+      tajwidRulesSeen: [],
+      quranVersesListened: [],
+      memorizedVerses: [],
+      wordsRead: [],
+      readingLevelCompleted: 0,
+      wuduStepsSeen: [],
+      tayammumStepsSeen: [],
+      prayerStepsSeen: [],
+      weakLetters: [],
+      weakNumbers: [],
+      weakHarakat: [],
+      lastActiveDate: null,
+      streak: 0,
+
+      addXp: (amount) => set({ xp: get().xp + amount }),
+
+      markLetterSeen: (id) => set({ learnedLetters: addUnique(get().learnedLetters, id) }),
+
+      markLetterMastered: (id) => {
+        const wasNew = !get().masteredLetters.includes(id)
+        set({ masteredLetters: addUnique(get().masteredLetters, id), weakLetters: removeItem(get().weakLetters, id) })
+        if (wasNew) get().addXp(10)
+      },
+
+      markNumberMastered: (id) => {
+        const wasNew = !get().masteredNumbers.includes(id)
+        set({ masteredNumbers: addUnique(get().masteredNumbers, id), weakNumbers: removeItem(get().weakNumbers, id) })
+        if (wasNew) get().addXp(5)
+      },
+
+      markHarakaSeen: (id) => set({ learnedHarakat: addUnique(get().learnedHarakat, id) }),
+
+      markTajwidRuleSeen: (id) => set({ tajwidRulesSeen: addUnique(get().tajwidRulesSeen, id) }),
+
+      markVerseListened: (key) => {
+        const wasNew = !get().quranVersesListened.includes(key)
+        set({ quranVersesListened: addUnique(get().quranVersesListened, key) })
+        if (wasNew) get().addXp(2)
+      },
+
+      markVerseMemorized: (verse) => {
+        const exists = get().memorizedVerses.some((v) => v.key === verse.key)
+        if (exists) return
+        set({ memorizedVerses: [...get().memorizedVerses, verse] })
+        get().addXp(15)
+      },
+
+      unmarkVerseMemorized: (key) =>
+        set({ memorizedVerses: get().memorizedVerses.filter((v) => v.key !== key) }),
+
+      markWordRead: (id) => {
+        const wasNew = !get().wordsRead.includes(id)
+        set({ wordsRead: addUnique(get().wordsRead, id) })
+        if (wasNew) get().addXp(3)
+      },
+
+      markWuduStepSeen: (id) => {
+        const wasNew = !get().wuduStepsSeen.includes(id)
+        set({ wuduStepsSeen: addUnique(get().wuduStepsSeen, id) })
+        if (wasNew) get().addXp(2)
+      },
+
+      markTayammumStepSeen: (id) => {
+        const wasNew = !get().tayammumStepsSeen.includes(id)
+        set({ tayammumStepsSeen: addUnique(get().tayammumStepsSeen, id) })
+        if (wasNew) get().addXp(2)
+      },
+
+      markPrayerStepSeen: (id) => {
+        const wasNew = !get().prayerStepsSeen.includes(id)
+        set({ prayerStepsSeen: addUnique(get().prayerStepsSeen, id) })
+        if (wasNew) get().addXp(2)
+      },
+
+      markLetterWeak: (id) => set({ weakLetters: addUnique(get().weakLetters, id) }),
+      markNumberWeak: (id) => set({ weakNumbers: addUnique(get().weakNumbers, id) }),
+      markHarakaWeak: (id) => set({ weakHarakat: addUnique(get().weakHarakat, id) }),
+      clearHarakaWeak: (id) => set({ weakHarakat: removeItem(get().weakHarakat, id) }),
+
+      setReadingLevelCompleted: (level) =>
+        set({ readingLevelCompleted: Math.max(level, get().readingLevelCompleted) }),
+
+      touchStreak: () => {
+        const today = todayISO()
+        const last = get().lastActiveDate
+        if (last === today) return
+        const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10)
+        const newStreak = last === yesterday ? get().streak + 1 : 1
+        set({ lastActiveDate: today, streak: newStreak })
+      },
+
+      resetProgress: () =>
+        set({
+          xp: 0,
+          learnedLetters: [],
+          masteredLetters: [],
+          masteredNumbers: [],
+          learnedHarakat: [],
+          tajwidRulesSeen: [],
+          quranVersesListened: [],
+          memorizedVerses: [],
+          wordsRead: [],
+          readingLevelCompleted: 0,
+          wuduStepsSeen: [],
+          tayammumStepsSeen: [],
+          prayerStepsSeen: [],
+          weakLetters: [],
+          weakNumbers: [],
+          weakHarakat: [],
+          lastActiveDate: null,
+          streak: 0,
+        }),
+    }),
+    { name: 'iqra-progress' },
+  ),
+)
