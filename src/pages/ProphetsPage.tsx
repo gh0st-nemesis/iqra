@@ -68,8 +68,10 @@ export default function ProphetsPage() {
           <div className="mb-6 flex items-start gap-2 rounded-2xl border border-orange-100 dark:border-orange-900/50 bg-orange-50 dark:bg-orange-950/30 p-4 text-sm text-orange-700 dark:text-orange-300">
             <InfoIcon className="h-4 w-4 shrink-0 translate-y-0.5" />
             <span>
-              Récits courts et non-exhaustifs des grandes lignes coraniques. Par respect de la tradition islamique,
-              aucun prophète n&apos;est représenté visuellement dans cette application.
+              Les 25 prophètes cités nommément dans le Coran, suivis d&apos;Al-Mahdi à titre de complément — une
+              figure attendue mentionnée dans la Sunna, mais qui n&apos;est pas un prophète. Récits courts et
+              non-exhaustifs ; par respect de la tradition islamique, aucun d&apos;eux n&apos;est représenté
+              visuellement dans cette application.
             </span>
           </div>
 
