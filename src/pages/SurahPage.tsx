@@ -121,8 +121,6 @@ export default function SurahPage() {
               <a
                 href={getSurahAudioDownloadUrl(surahNumber)}
                 download={`sourate-${surah.number}-${surah.englishName}.mp3`}
-                target="_blank"
-                rel="noopener"
                 className="flex items-center gap-1.5 rounded-full bg-white/15 px-5 py-2 text-sm font-semibold backdrop-blur transition hover:bg-white/25"
               >
                 <DownloadIcon className="h-4 w-4" /> Télécharger le mp3
@@ -133,10 +131,6 @@ export default function SurahPage() {
                 Sourate longue : le fichier peut peser plusieurs dizaines de Mo.
               </p>
             )}
-            <p className="mt-2 text-xs text-emerald-100/80">
-              Selon ton navigateur, le mp3 se télécharge directement ou s&apos;ouvre dans un nouvel onglet — dans ce
-              cas, utilise le bouton de téléchargement du lecteur ou clic droit → Enregistrer sous.
-            </p>
           </div>
 
           <audio ref={audioRef} onEnded={handleAudioEnded} className="hidden" />

@@ -32,15 +32,16 @@ export const JUZ_AMMA_RANGE = { from: 78, to: 114 }
 // Nombre total de versets du Coran (décompte standard, riwayah Hafs).
 export const TOTAL_QURAN_VERSES = 6236
 
-// Fichier mp3 unique pour la sourate entière (récitation de Mishary Alafasy), servi par le même CDN
-// que les fichiers audio par verset (cdn.islamic.network, derrière alquran.cloud). Seul le débit
-// 128 kbps est disponible à ce niveau (par sourate) — pas de 64/32 kbps comme pour les versets
-// individuels. Attention : ce fichier peut être volumineux pour les longues sourates (plusieurs
-// dizaines de Mo, jusqu'à environ 120 Mo pour Al-Baqara). Le CDN ne renvoie pas d'en-tête CORS, donc
-// ce lien ne peut pas être récupéré en `fetch()` pour forcer un téléchargement local : on ouvre un
-// lien direct (voir SurahPage) que le navigateur télécharge ou ouvre selon ses réglages.
+// Téléchargement du mp3 complet d'une sourate (récitation de Mishary Alafasy). On passe par notre
+// propre route /api/surah-audio (voir api/surah-audio.js) plutôt que par un lien direct vers le CDN
+// cdn.islamic.network : ce CDN ne renvoie ni en-tête CORS ni Content-Disposition, donc un lien direct
+// ne peut pas être forcé en téléchargement par le navigateur (il s'ouvrirait/jouerait au lieu de se
+// sauvegarder). Notre route relaie le fichier depuis notre propre domaine avec les bons en-têtes.
+// Attention : ce fichier peut être volumineux pour les longues sourates (jusqu'à environ 120 Mo pour
+// Al-Baqara) — seul le débit 128 kbps est disponible à ce niveau (pas de 64/32 kbps comme pour les
+// versets individuels).
 export function getSurahAudioDownloadUrl(surahNumber: number): string {
-  return `https://cdn.islamic.network/quran/audio-surah/128/ar.alafasy/${surahNumber}.mp3`
+  return `/api/surah-audio?number=${surahNumber}`
 }
 
 async function getJson<T>(path: string): Promise<T> {
