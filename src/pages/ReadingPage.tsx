@@ -4,7 +4,8 @@ import { readingWords } from '../data/reading'
 import { useProgress } from '../store/progress'
 import AudioButton from '../components/AudioButton'
 import WordExerciseFlow from '../components/WordExerciseFlow'
-import { pickRandom } from '../lib/quiz'
+import McqQuiz, { type McqQuestion } from '../components/McqQuiz'
+import { buildChoices, pickRandom } from '../lib/quiz'
 import { usePageTitle } from '../lib/usePageTitle'
 import { BookOpenIcon, CheckIcon, TrophyIcon } from '../components/icons'
 
@@ -17,8 +18,9 @@ const shortHarakat = [
 
 const connectingLetters = alphabet.filter((l) => l.char !== 'ا')
 const EXERCISE_SET_SIZE = 6
+const QUIZ_SET_SIZE = 10
 
-type Tab = 'learn' | 'exercises'
+type Tab = 'learn' | 'exercises' | 'quiz'
 
 export default function ReadingPage() {
   usePageTitle('Lecture')
@@ -32,6 +34,26 @@ export default function ReadingPage() {
 
   const wordsRead = useProgress((s) => s.wordsRead)
   const markWordRead = useProgress((s) => s.markWordRead)
+  const masteredWords = useProgress((s) => s.masteredWords)
+  const markWordMastered = useProgress((s) => s.markWordMastered)
+  const markWordWeak = useProgress((s) => s.markWordWeak)
+
+  const [quizQuestions, setQuizQuestions] = useState<McqQuestion[]>(() => buildQuizQuestions())
+  const [quizResult, setQuizResult] = useState<{ score: number; total: number } | null>(null)
+  const [quizKey, setQuizKey] = useState(0)
+
+  function buildQuizQuestions(): McqQuestion[] {
+    return pickRandom(readingWords, QUIZ_SET_SIZE).map((w) => ({
+      id: w.id,
+      prompt: w.word,
+      promptIsArabic: true,
+      choices: buildChoices(
+        w.meaning,
+        readingWords.map((x) => x.meaning),
+      ),
+      correctChoice: w.meaning,
+    }))
+  }
 
   const letter = connectingLetters.find((l) => l.id === letterId)!
   const haraka = shortHarakat.find((h) => h.id === harakaId)!
@@ -70,6 +92,14 @@ export default function ReadingPage() {
             }`}
           >
             Exercices
+          </button>
+          <button
+            onClick={() => setTab('quiz')}
+            className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
+              tab === 'quiz' ? 'bg-white dark:bg-slate-800 text-brand-700 dark:text-slate-200 shadow-sm' : 'text-brand-500 dark:text-slate-400'
+            }`}
+          >
+            Quiz
           </button>
         </div>
       </div>
@@ -240,6 +270,42 @@ export default function ReadingPage() {
                 Recommencer
               </button>
             </div>
+          )}
+        </div>
+      )}
+
+      {tab === 'quiz' && (
+        <div className="mx-auto max-w-xl">
+          <p className="mb-6 text-sm text-brand-500 dark:text-slate-400">
+            {masteredWords.length} / {readingWords.length} mots maîtrisés · retrouve le sens de chaque mot affiché. Tes
+            erreurs atterrissent dans la <span className="font-semibold">Révision</span>.
+          </p>
+          {quizResult ? (
+            <div className="rounded-2xl border border-brand-100 dark:border-slate-700 bg-white dark:bg-slate-800 p-8 text-center shadow-sm">
+              <TrophyIcon className="mx-auto mb-3 h-10 w-10 text-sand-500 dark:text-amber-400" />
+              <p className="mb-1 text-xl font-bold text-brand-800 dark:text-slate-100">
+                Score : {quizResult.score} / {quizResult.total}
+              </p>
+              <p className="mb-5 text-sm text-brand-500 dark:text-slate-400">Continue à réviser pour tout maîtriser !</p>
+              <button
+                onClick={() => {
+                  setQuizResult(null)
+                  setQuizQuestions(buildQuizQuestions())
+                  setQuizKey((k) => k + 1)
+                }}
+                className="rounded-full bg-brand-600 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-700"
+              >
+                Recommencer
+              </button>
+            </div>
+          ) : (
+            <McqQuiz
+              key={quizKey}
+              questions={quizQuestions}
+              onFinish={(score, total) => setQuizResult({ score, total })}
+              onCorrectAnswer={(id) => markWordMastered(id)}
+              onWrongAnswer={(id) => markWordWeak(id)}
+            />
           )}
         </div>
       )}

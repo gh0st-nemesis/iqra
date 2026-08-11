@@ -12,6 +12,8 @@ interface ProgressState {
   quranVersesListened: string[]
   memorizedVerses: MemorizedVerse[]
   wordsRead: string[]
+  masteredWords: string[]
+  weakWords: string[]
   readingLevelCompleted: number
   wuduStepsSeen: string[]
   tayammumStepsSeen: string[]
@@ -42,6 +44,8 @@ interface ProgressState {
   markVerseMemorized: (verse: MemorizedVerse) => void
   unmarkVerseMemorized: (key: string) => void
   markWordRead: (id: string) => void
+  markWordMastered: (id: string) => void
+  markWordWeak: (id: string) => void
   markWuduStepSeen: (id: string) => void
   markTayammumStepSeen: (id: string) => void
   markPrayerStepSeen: (id: string) => void
@@ -77,6 +81,8 @@ const DATA_KEYS = [
   'quranVersesListened',
   'memorizedVerses',
   'wordsRead',
+  'masteredWords',
+  'weakWords',
   'readingLevelCompleted',
   'wuduStepsSeen',
   'tayammumStepsSeen',
@@ -122,6 +128,8 @@ export const useProgress = create<ProgressState>()(
       quranVersesListened: [],
       memorizedVerses: [],
       wordsRead: [],
+      masteredWords: [],
+      weakWords: [],
       readingLevelCompleted: 0,
       wuduStepsSeen: [],
       tayammumStepsSeen: [],
@@ -183,6 +191,13 @@ export const useProgress = create<ProgressState>()(
         set({ wordsRead: addUnique(get().wordsRead, id) })
         if (wasNew) get().addXp(3)
       },
+
+      markWordMastered: (id) => {
+        const wasNew = !get().masteredWords.includes(id)
+        set({ masteredWords: addUnique(get().masteredWords, id), weakWords: removeItem(get().weakWords, id) })
+        if (wasNew) get().addXp(3)
+      },
+      markWordWeak: (id) => set({ weakWords: addUnique(get().weakWords, id) }),
 
       markWuduStepSeen: (id) => {
         const wasNew = !get().wuduStepsSeen.includes(id)
@@ -280,6 +295,8 @@ export const useProgress = create<ProgressState>()(
           quranVersesListened: [],
           memorizedVerses: [],
           wordsRead: [],
+          masteredWords: [],
+          weakWords: [],
           readingLevelCompleted: 0,
           wuduStepsSeen: [],
           tayammumStepsSeen: [],

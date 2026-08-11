@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { numbers } from '../data/numbers'
+import { NUMBER_GROUPS, numbers } from '../data/numbers'
 import { useProgress } from '../store/progress'
 import AudioButton from '../components/AudioButton'
 import McqQuiz, { type McqQuestion } from '../components/McqQuiz'
@@ -81,23 +81,37 @@ export default function NumbersPage() {
           </div>
 
           <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
-            <div className="grid grid-cols-4 gap-2 sm:grid-cols-6">
-              {numbers.map((n) => {
-                const isMastered = masteredNumbers.includes(n.id)
-                const isSelected = n.id === selectedId
+            <div className="space-y-5">
+              {NUMBER_GROUPS.map((group) => {
+                const groupNumbers = numbers.filter((n) => n.value >= group.from && n.value <= group.to)
                 return (
-                  <button
-                    key={n.id}
-                    onClick={() => setSelectedId(n.id)}
-                    className={`relative flex aspect-square flex-col items-center justify-center rounded-xl border-2 font-arabic text-2xl transition sm:text-3xl ${
-                      isSelected
-                        ? 'border-brand-600 bg-brand-50 dark:bg-slate-700/50 text-brand-800 dark:text-slate-100'
-                        : 'border-brand-100 dark:border-slate-700 bg-white dark:bg-slate-800 text-brand-700 dark:text-slate-200 hover:border-brand-300'
-                    }`}
-                  >
-                    {n.digit}
-                    {isMastered && <StarIcon className="absolute right-1 top-1 h-3 w-3 text-sand-500 dark:text-amber-400" />}
-                  </button>
+                  <div key={group.label}>
+                    <h2 className="mb-2 text-xs font-bold uppercase tracking-wide text-brand-500 dark:text-slate-400">
+                      {group.label}
+                    </h2>
+                    <div className="grid grid-cols-4 gap-2 sm:grid-cols-6">
+                      {groupNumbers.map((n) => {
+                        const isMastered = masteredNumbers.includes(n.id)
+                        const isSelected = n.id === selectedId
+                        return (
+                          <button
+                            key={n.id}
+                            onClick={() => setSelectedId(n.id)}
+                            className={`relative flex aspect-square flex-col items-center justify-center rounded-xl border-2 font-arabic text-2xl transition sm:text-3xl ${
+                              isSelected
+                                ? 'border-brand-600 bg-brand-50 dark:bg-slate-700/50 text-brand-800 dark:text-slate-100'
+                                : 'border-brand-100 dark:border-slate-700 bg-white dark:bg-slate-800 text-brand-700 dark:text-slate-200 hover:border-brand-300'
+                            }`}
+                          >
+                            {n.digit}
+                            {isMastered && (
+                              <StarIcon className="absolute right-1 top-1 h-3 w-3 text-sand-500 dark:text-amber-400" />
+                            )}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
                 )
               })}
             </div>

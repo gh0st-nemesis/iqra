@@ -43,6 +43,18 @@ describe('markNumberMastered', () => {
   })
 })
 
+describe('markWordMastered', () => {
+  it('accorde 3 XP une seule fois et retire le mot des points faibles', () => {
+    useProgress.getState().markWordWeak('w-yad')
+    useProgress.getState().markWordMastered('w-yad')
+    useProgress.getState().markWordMastered('w-yad')
+
+    expect(useProgress.getState().masteredWords).toEqual(['w-yad'])
+    expect(useProgress.getState().weakWords).not.toContain('w-yad')
+    expect(useProgress.getState().xp).toBe(3)
+  })
+})
+
 describe('markVerseMemorized', () => {
   const verse = { key: '1:1', surahNumber: 1, surahName: 'Al-Fatiha', verseNumber: 1, text: '...', audioUrl: null }
 

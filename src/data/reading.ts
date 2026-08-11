@@ -17,6 +17,14 @@ export const readingWords: WordExercise[] = [
   { id: 'w-maa', word: 'مَاءٌ', transliteration: 'mā\'un', meaning: 'de l\'eau', difficulty: 1 },
   { id: 'w-bayt', word: 'بَيْتٌ', transliteration: 'baytun', meaning: 'une maison', difficulty: 1 },
   { id: 'w-najm', word: 'نَجْمٌ', transliteration: 'najmun', meaning: 'une étoile', difficulty: 1 },
+  { id: 'w-akh', word: 'أَخٌ', transliteration: 'akhun', meaning: 'un frère', difficulty: 1 },
+  { id: 'w-ukht', word: 'أُخْتٌ', transliteration: 'ukhtun', meaning: 'une sœur', difficulty: 1 },
+  { id: 'w-kalb', word: 'كَلْبٌ', transliteration: 'kalbun', meaning: 'un chien', difficulty: 1 },
+  { id: 'w-qitt', word: 'قِطٌّ', transliteration: 'qiṭṭun', meaning: 'un chat', difficulty: 1 },
+  { id: 'w-tayr', word: 'طَيْرٌ', transliteration: 'ṭayrun', meaning: 'un oiseau', difficulty: 1 },
+  { id: 'w-yawm', word: 'يَوْمٌ', transliteration: 'yawmun', meaning: 'un jour', difficulty: 1 },
+  { id: 'w-shahr', word: 'شَهْرٌ', transliteration: 'shahrun', meaning: 'un mois', difficulty: 1 },
+  { id: 'w-sana', word: 'سَنَةٌ', transliteration: 'sanatun', meaning: 'une année', difficulty: 1 },
 
   // Niveau 2 — mots courants (3 consonnes)
   { id: 'w-qalam', word: 'قَلَمٌ', transliteration: 'qalamun', meaning: 'un stylo', difficulty: 2 },
@@ -34,6 +42,14 @@ export const readingWords: WordExercise[] = [
   { id: 'w-jamil', word: 'جَمِيلٌ', transliteration: 'jamīlun', meaning: 'beau', difficulty: 2 },
   { id: 'w-kabir', word: 'كَبِيرٌ', transliteration: 'kabīrun', meaning: 'grand', difficulty: 2 },
   { id: 'w-saghir', word: 'صَغِيرٌ', transliteration: 'ṣaghīrun', meaning: 'petit', difficulty: 2 },
+  { id: 'w-samak', word: 'سَمَكٌ', transliteration: 'samakun', meaning: 'du poisson', difficulty: 2 },
+  { id: 'w-taam', word: 'طَعَامٌ', transliteration: 'ṭaʿāmun', meaning: 'de la nourriture', difficulty: 2 },
+  { id: 'w-matar', word: 'مَطَرٌ', transliteration: 'maṭarun', meaning: 'de la pluie', difficulty: 2 },
+  { id: 'w-thalj', word: 'ثَلْجٌ', transliteration: 'thaljun', meaning: 'de la neige', difficulty: 2 },
+  { id: 'w-sarir', word: 'سَرِيرٌ', transliteration: 'sarīrun', meaning: 'un lit', difficulty: 2 },
+  { id: 'w-baid', word: 'بَعِيدٌ', transliteration: 'baʿīdun', meaning: 'loin', difficulty: 2 },
+  { id: 'w-qarib', word: 'قَرِيبٌ', transliteration: 'qarībun', meaning: 'proche', difficulty: 2 },
+  { id: 'w-jadid', word: 'جَدِيدٌ', transliteration: 'jadīdun', meaning: 'nouveau', difficulty: 2 },
 
   // Niveau 3 — mots plus longs et courtes expressions (dont des formules courantes)
   { id: 'w-maktaba', word: 'مَكْتَبَةٌ', transliteration: 'maktabatun', meaning: 'une bibliothèque', difficulty: 3 },
@@ -51,4 +67,12 @@ export const readingWords: WordExercise[] = [
   { id: 'w-astaghfirullah', word: 'أَسْتَغْفِرُ اللَّهَ', transliteration: 'astaghfiru-llāh', meaning: 'je demande pardon à Allah', difficulty: 3 },
   { id: 'w-talib-ilm', word: 'طَالِبُ عِلْمٍ', transliteration: 'ṭālibu ʿilmin', meaning: 'un étudiant en science (religieuse)', difficulty: 3 },
   { id: 'w-quran-karim', word: 'الْقُرْآنُ الْكَرِيمُ', transliteration: 'al-qur\'ānu-l-karīm', meaning: 'le noble Coran', difficulty: 3 },
+  { id: 'w-allahu-akbar', word: 'اللَّهُ أَكْبَرُ', transliteration: 'Allāhu akbar', meaning: 'Allah est le plus Grand', difficulty: 3 },
+  { id: 'w-la-ilaha-illallah', word: 'لَا إِلَٰهَ إِلَّا اللَّهُ', transliteration: 'lā ilāha illa-llāh', meaning: 'il n\'y a de divinité qu\'Allah', difficulty: 3 },
+  { id: 'w-baraka-allahu-fik', word: 'بَارَكَ اللَّهُ فِيكَ', transliteration: 'bāraka-llāhu fīk', meaning: 'qu\'Allah te bénisse', difficulty: 3 },
+  { id: 'w-ramadan', word: 'رَمَضَانُ', transliteration: 'ramaḍānu', meaning: 'Ramadan (mois du jeûne)', difficulty: 3 },
+  { id: 'w-taqabbal-allah', word: 'تَقَبَّلَ اللَّهُ', transliteration: 'taqabbala-llāh', meaning: 'qu\'Allah accepte (ton adoration)', difficulty: 3 },
+  { id: 'w-eid-mubarak', word: 'عِيدٌ مُبَارَكٌ', transliteration: 'ʿīdun mubārakun', meaning: 'bonne fête (à l\'occasion de l\'Aïd)', difficulty: 3 },
+  { id: 'w-hajj-mabrur', word: 'حَجٌّ مَبْرُورٌ', transliteration: 'ḥajjun mabrūrun', meaning: 'un pèlerinage agréé par Allah', difficulty: 3 },
+  { id: 'w-jazakillah', word: 'جَزَاكِ اللَّهُ خَيْرًا', transliteration: 'jazāki-llāhu khayran', meaning: 'qu\'Allah te récompense en bien (à une femme)', difficulty: 3 },
 ]

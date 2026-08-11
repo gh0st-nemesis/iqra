@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { alphabet } from '../data/alphabet'
 import { numbers } from '../data/numbers'
 import { harakat } from '../data/harakat'
+import { readingWords } from '../data/reading'
 import { vocabWords } from '../data/vocabulary'
 import { namesOfAllah } from '../data/namesOfAllah'
 import { useProgress } from '../store/progress'
@@ -19,6 +20,7 @@ function buildQuestions(
   weakHarakat: string[],
   weakVocab: string[],
   weakNames: string[],
+  weakWords: string[],
 ): McqQuestion[] {
   const letterQuestions: McqQuestion[] = weakLetters
     .map((id) => alphabet.find((l) => l.id === id))
@@ -90,10 +92,28 @@ function buildQuestions(
       correctChoice: n.meaning,
     }))
 
-  return shuffle([...letterQuestions, ...numberQuestions, ...harakaQuestions, ...vocabQuestions, ...nameQuestions]).slice(
-    0,
-    MAX_QUESTIONS,
-  )
+  const wordQuestions: McqQuestion[] = weakWords
+    .map((id) => readingWords.find((w) => w.id === id))
+    .filter((w): w is NonNullable<typeof w> => !!w)
+    .map((w) => ({
+      id: `word:${w.id}`,
+      prompt: w.word,
+      promptIsArabic: true,
+      choices: buildChoices(
+        w.meaning,
+        readingWords.map((x) => x.meaning),
+      ),
+      correctChoice: w.meaning,
+    }))
+
+  return shuffle([
+    ...letterQuestions,
+    ...numberQuestions,
+    ...harakaQuestions,
+    ...vocabQuestions,
+    ...nameQuestions,
+    ...wordQuestions,
+  ]).slice(0, MAX_QUESTIONS)
 }
 
 export default function RevisionPage() {
@@ -103,14 +123,16 @@ export default function RevisionPage() {
   const weakHarakat = useProgress((s) => s.weakHarakat)
   const weakVocab = useProgress((s) => s.weakVocab)
   const weakNames = useProgress((s) => s.weakNames)
+  const weakWords = useProgress((s) => s.weakWords)
   const markLetterMastered = useProgress((s) => s.markLetterMastered)
   const markNumberMastered = useProgress((s) => s.markNumberMastered)
   const clearHarakaWeak = useProgress((s) => s.clearHarakaWeak)
   const markVocabMastered = useProgress((s) => s.markVocabMastered)
   const markNameMastered = useProgress((s) => s.markNameMastered)
+  const markWordMastered = useProgress((s) => s.markWordMastered)
 
   const [questions] = useState<McqQuestion[]>(() =>
-    buildQuestions(weakLetters, weakNumbers, weakHarakat, weakVocab, weakNames),
+    buildQuestions(weakLetters, weakNumbers, weakHarakat, weakVocab, weakNames, weakWords),
   )
   const [result, setResult] = useState<{ score: number; total: number } | null>(null)
 
@@ -121,9 +143,11 @@ export default function RevisionPage() {
     else if (category === 'haraka') clearHarakaWeak(id)
     else if (category === 'vocab') markVocabMastered(id)
     else if (category === 'name') markNameMastered(id)
+    else if (category === 'word') markWordMastered(id)
   }
 
-  const totalWeak = weakLetters.length + weakNumbers.length + weakHarakat.length + weakVocab.length + weakNames.length
+  const totalWeak =
+    weakLetters.length + weakNumbers.length + weakHarakat.length + weakVocab.length + weakNames.length + weakWords.length
 
   return (
     <div className="mx-auto max-w-xl">
@@ -131,8 +155,8 @@ export default function RevisionPage() {
         <RefreshIcon className="h-6 w-6 text-brand-600 dark:text-brand-400" /> Révision
       </h1>
       <p className="mb-6 text-sm text-brand-500 dark:text-slate-400">
-        Un quiz ciblé, mélangeant lettres, chiffres, harakat, vocabulaire et noms d&apos;Allah où tu t&apos;es trompé
-        récemment.
+        Un quiz ciblé, mélangeant lettres, chiffres, harakat, mots de lecture, vocabulaire et noms d&apos;Allah où tu
+        t&apos;es trompé récemment.
       </p>
 
       {questions.length === 0 ? (
@@ -140,8 +164,8 @@ export default function RevisionPage() {
           <CheckCircleIcon className="mx-auto mb-3 h-10 w-10 text-green-500" />
           <p className="mb-1 font-semibold text-brand-800 dark:text-slate-100">Rien à réviser pour le moment !</p>
           <p className="text-sm text-brand-500 dark:text-slate-400">
-            Continue les quiz de l&apos;Alphabet, des Chiffres, des Harakat, du Vocabulaire et des Noms d&apos;Allah :
-            tes erreurs atterriront automatiquement ici.
+            Continue les quiz de l&apos;Alphabet, des Chiffres, des Harakat, de la Lecture, du Vocabulaire et des Noms
+            d&apos;Allah : tes erreurs atterriront automatiquement ici.
           </p>
         </div>
       ) : result ? (
