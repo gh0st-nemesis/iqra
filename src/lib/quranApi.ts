@@ -32,6 +32,17 @@ export const JUZ_AMMA_RANGE = { from: 78, to: 114 }
 // Nombre total de versets du Coran (décompte standard, riwayah Hafs).
 export const TOTAL_QURAN_VERSES = 6236
 
+// Fichier mp3 unique pour la sourate entière (récitation de Mishary Alafasy), servi par le même CDN
+// que les fichiers audio par verset (cdn.islamic.network, derrière alquran.cloud). Seul le débit
+// 128 kbps est disponible à ce niveau (par sourate) — pas de 64/32 kbps comme pour les versets
+// individuels. Attention : ce fichier peut être volumineux pour les longues sourates (plusieurs
+// dizaines de Mo, jusqu'à environ 120 Mo pour Al-Baqara). Le CDN ne renvoie pas d'en-tête CORS, donc
+// ce lien ne peut pas être récupéré en `fetch()` pour forcer un téléchargement local : on ouvre un
+// lien direct (voir SurahPage) que le navigateur télécharge ou ouvre selon ses réglages.
+export function getSurahAudioDownloadUrl(surahNumber: number): string {
+  return `https://cdn.islamic.network/quran/audio-surah/128/ar.alafasy/${surahNumber}.mp3`
+}
+
 async function getJson<T>(path: string): Promise<T> {
   const res = await fetch(`${BASE_URL}${path}`)
   if (!res.ok) throw new Error(`Erreur API Coran (${res.status})`)
