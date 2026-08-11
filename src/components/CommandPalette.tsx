@@ -1,7 +1,12 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { modules } from '../data/modules'
-import { HomeIcon, InfoIcon, RefreshIcon, SearchIcon, SettingsIcon, moduleIcons, type IconProps } from './icons'
+import { vocabWords } from '../data/vocabulary'
+import { namesOfAllah } from '../data/namesOfAllah'
+import { prophets } from '../data/prophets'
+import { surahIndex } from '../data/surahIndex'
+import { HomeIcon, InfoIcon, LandmarkIcon, LayersIcon, RefreshIcon, ScrollIcon, SearchIcon, SettingsIcon, SparkleIcon, type IconProps } from './icons'
+import { moduleIcons } from './moduleIcons'
 
 interface PaletteItem {
   id: string
@@ -11,7 +16,8 @@ interface PaletteItem {
   icon: (props: IconProps) => JSX.Element
 }
 
-const staticItems: PaletteItem[] = [
+// Items affichés quand la palette s'ouvre sans recherche : pages et modules, en nombre raisonnable.
+const browseItems: PaletteItem[] = [
   { id: 'home', label: 'Accueil', path: '/', icon: HomeIcon },
   ...modules.map((m) => ({
     id: m.id,
@@ -24,6 +30,43 @@ const staticItems: PaletteItem[] = [
   { id: 'profil', label: 'Profil', description: 'Progression, badges, réglages', path: '/profil', icon: SettingsIcon },
   { id: 'about', label: 'À propos', description: "Posture éditoriale, sources", path: '/a-propos', icon: InfoIcon },
 ]
+
+// Items indexés pour la recherche plein texte mais absents de la liste de navigation par défaut
+// (des centaines d'entrées : mots de vocabulaire, Noms d'Allah, prophètes, sourates) — on ne les
+// filtre dans `results` que si l'utilisateur a tapé une requête, pour ne jamais les afficher tous
+// d'un coup à l'ouverture de la palette.
+const searchOnlyItems: PaletteItem[] = [
+  ...vocabWords.map((w) => ({
+    id: `vocab:${w.id}`,
+    label: w.arabic,
+    description: `Vocabulaire — ${w.meaning}`,
+    path: '/vocabulaire',
+    icon: LayersIcon,
+  })),
+  ...namesOfAllah.map((n) => ({
+    id: `name:${n.id}`,
+    label: `${n.transliteration} — ${n.arabic}`,
+    description: `Nom d'Allah — ${n.meaning}`,
+    path: '/noms-d-allah',
+    icon: SparkleIcon,
+  })),
+  ...prophets.map((p) => ({
+    id: `prophet:${p.id}`,
+    label: `${p.name} — ${p.arabicName}`,
+    description: 'Prophète',
+    path: '/prophetes',
+    icon: ScrollIcon,
+  })),
+  ...surahIndex.map((s) => ({
+    id: `surah:${s.number}`,
+    label: `${s.number}. ${s.englishName} — ${s.name}`,
+    description: `Sourate — ${s.englishNameTranslation} · ${s.numberOfAyahs} versets`,
+    path: `/coran/${s.number}`,
+    icon: LandmarkIcon,
+  })),
+]
+
+const MAX_RESULTS = 50
 
 interface CommandPaletteProps {
   open: boolean
@@ -39,10 +82,11 @@ export default function CommandPalette({ open, onClose }: CommandPaletteProps) {
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase()
-    if (!q) return staticItems
-    return staticItems.filter(
-      (i) => i.label.toLowerCase().includes(q) || i.description?.toLowerCase().includes(q),
-    )
+    if (!q) return browseItems
+    const pool = [...browseItems, ...searchOnlyItems]
+    return pool
+      .filter((i) => i.label.toLowerCase().includes(q) || i.description?.toLowerCase().includes(q))
+      .slice(0, MAX_RESULTS)
   }, [query])
 
   useEffect(() => {

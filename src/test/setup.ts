@@ -35,3 +35,24 @@ class MemoryStorage implements Storage {
 if (typeof globalThis.localStorage === 'undefined') {
   globalThis.localStorage = new MemoryStorage()
 }
+
+// Matchers jest-dom (toBeInTheDocument, toHaveTextContent...) pour les tests de composants
+// (fichiers avec `// @vitest-environment jsdom` en tête). L'import est sans effet en environnement
+// Node : il ne fait qu'étendre `expect`, il n'a pas besoin du DOM à l'exécution.
+import '@testing-library/jest-dom/vitest'
+
+// Nettoyage automatique du DOM entre chaque test de composant (équivalent du afterEach standard de
+// @testing-library/react/pure), gardé conditionnel car `document` n'existe pas dans les fichiers de
+// test en environnement Node (store, logique métier).
+import { afterEach } from 'vitest'
+import { cleanup } from '@testing-library/react'
+
+afterEach(() => {
+  if (typeof document !== 'undefined') cleanup()
+})
+
+// jsdom n'implémente pas scrollIntoView (utilisé par CommandPalette pour garder l'item actif visible) ;
+// on le no-op pour les tests de composants plutôt que de le mocker dans chaque fichier de test.
+if (typeof Element !== 'undefined' && !Element.prototype.scrollIntoView) {
+  Element.prototype.scrollIntoView = () => {}
+}

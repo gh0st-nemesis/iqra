@@ -173,9 +173,16 @@ export default function QuranPage() {
                         <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-sand-100 text-xs font-bold text-sand-600 dark:bg-amber-500/10 dark:text-amber-400">
                           {v.verseNumber}
                         </span>
-                        <p className="arabic-xl flex-1 text-right text-xl leading-relaxed text-brand-800 dark:text-slate-100">
-                          {v.text}
-                        </p>
+                        <div className="flex-1">
+                          <p className="arabic-xl text-right text-xl leading-relaxed text-brand-800 dark:text-slate-100">
+                            {v.text}
+                          </p>
+                          {v.transliteration && (
+                            <p className="mt-1 text-right text-xs italic text-brand-400 dark:text-slate-500">
+                              {v.transliteration}
+                            </p>
+                          )}
+                        </div>
                         <button
                           onClick={() => playMemorized(v.key, v.audioUrl)}
                           disabled={!v.audioUrl}

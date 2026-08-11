@@ -14,6 +14,7 @@ export default function SurahPage() {
   const [error, setError] = useState<string | null>(null)
   const [playingVerse, setPlayingVerse] = useState<number | null>(null)
   const [autoPlay, setAutoPlay] = useState(false)
+  const [showPhonetic, setShowPhonetic] = useState(true)
 
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const markVerseListened = useProgress((s) => s.markVerseListened)
@@ -56,13 +57,13 @@ export default function SurahPage() {
     }
   }
 
-  function toggleMemorized(verseNumber: number, text: string, audioUrl: string | null) {
+  function toggleMemorized(verseNumber: number, text: string, transliteration: string | null, audioUrl: string | null) {
     if (!surah) return
     const key = `${surahNumber}:${verseNumber}`
     if (memorizedVerses.some((v) => v.key === key)) {
       unmarkVerseMemorized(key)
     } else {
-      markVerseMemorized({ key, surahNumber, surahName: surah.name, verseNumber, text, audioUrl })
+      markVerseMemorized({ key, surahNumber, surahName: surah.name, verseNumber, text, transliteration, audioUrl })
     }
   }
 
@@ -92,12 +93,20 @@ export default function SurahPage() {
             </p>
             <h1 className="mb-1 font-arabic text-4xl">{surah.name}</h1>
             <p className="text-emerald-100">{surah.englishNameTranslation}</p>
-            <button
-              onClick={() => playVerse(1, true)}
-              className="mt-4 flex items-center gap-1.5 rounded-full bg-white/15 px-5 py-2 text-sm font-semibold backdrop-blur transition hover:bg-white/25"
-            >
-              <PlayIcon className="h-4 w-4" /> Écouter toute la sourate
-            </button>
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              <button
+                onClick={() => playVerse(1, true)}
+                className="flex items-center gap-1.5 rounded-full bg-white/15 px-5 py-2 text-sm font-semibold backdrop-blur transition hover:bg-white/25"
+              >
+                <PlayIcon className="h-4 w-4" /> Écouter toute la sourate
+              </button>
+              <button
+                onClick={() => setShowPhonetic((v) => !v)}
+                className="flex items-center gap-1.5 rounded-full bg-white/15 px-5 py-2 text-sm font-semibold backdrop-blur transition hover:bg-white/25"
+              >
+                {showPhonetic ? 'Masquer la phonétique' : 'Afficher la phonétique'}
+              </button>
+            </div>
           </div>
 
           <audio ref={audioRef} onEnded={handleAudioEnded} className="hidden" />
@@ -128,7 +137,9 @@ export default function SurahPage() {
                         </span>
                       )}
                       <button
-                        onClick={() => toggleMemorized(verse.numberInSurah, verse.text, verse.audioUrl)}
+                        onClick={() =>
+                          toggleMemorized(verse.numberInSurah, verse.text, verse.transliteration, verse.audioUrl)
+                        }
                         className={`flex h-9 w-9 items-center justify-center rounded-full border-2 transition ${
                           isMemorized
                             ? 'border-sand-400 bg-sand-100 text-sand-600 dark:border-amber-500 dark:bg-amber-500/10 dark:text-amber-400'
@@ -151,6 +162,9 @@ export default function SurahPage() {
                   <p className="arabic-xl text-right text-3xl leading-loose text-brand-800 dark:text-slate-100">
                     {verse.text}
                   </p>
+                  {showPhonetic && verse.transliteration && (
+                    <p className="mt-2 text-sm italic text-brand-500 dark:text-slate-400">{verse.transliteration}</p>
+                  )}
                 </div>
               )
             })}

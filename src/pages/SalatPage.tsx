@@ -87,6 +87,25 @@ export default function SalatPage() {
                   </Link>
                 )}
 
+                {step.suggestedSurahs && step.suggestedSurahs.length > 0 && (
+                  <div className="mb-3">
+                    <p className="mb-1.5 text-xs font-medium text-brand-500 dark:text-slate-400">
+                      Puis une courte sourate, par exemple :
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {step.suggestedSurahs.map((s) => (
+                        <Link
+                          key={s.number}
+                          to={`/coran/${s.number}`}
+                          className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-100 dark:border-emerald-900/50 dark:bg-emerald-950/30 dark:text-emerald-300 dark:hover:bg-emerald-950/60"
+                        >
+                          <span className="font-arabic text-sm">{s.name}</span> {s.englishName}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {step.duas.length > 0 && (
                   <div className="space-y-2">
                     {step.duas.map((dua, i) => (

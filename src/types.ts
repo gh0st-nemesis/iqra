@@ -77,6 +77,8 @@ export interface MemorizedVerse {
   surahName: string
   verseNumber: number
   text: string
+  // Optionnel : absent pour les versets mémorisés avant l'ajout de la translittération phonétique.
+  transliteration?: string | null
   audioUrl: string | null
 }
 
@@ -109,6 +111,8 @@ export interface PrayerStep {
   duas: RitualDua[]
   repeat?: number
   linkToFatiha?: boolean
+  // Sourates courtes suggérées pour la 2e lecture (après Al-Fâtiha), avec lien vers /coran/:number.
+  suggestedSurahs?: { number: number; name: string; englishName: string }[]
   image: RealPhoto
 }
 

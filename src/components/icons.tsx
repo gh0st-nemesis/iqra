@@ -1,7 +1,8 @@
 // Bibliothèque d'icônes SVG minimalistes (style trait, 24x24, currentColor).
 // Toutes les icônes de l'app passent par ici — aucun emoji n'est utilisé dans l'UI.
+// Note : ce fichier n'exporte que des composants (contrainte du Fast Refresh de Vite) ; la table
+// moduleIcons (ModuleIconName -> composant) vit dans ./moduleIcons.ts.
 import type { SVGProps } from 'react'
-import type { ModuleIconName } from '../types'
 
 export type IconProps = SVGProps<SVGSVGElement>
 
@@ -475,20 +476,4 @@ export function XIcon(props: IconProps) {
       <path d="M18.5 5.5l-13 13" />
     </svg>
   )
-}
-
-export const moduleIcons: Record<ModuleIconName, (props: IconProps) => JSX.Element> = {
-  letters: LettersIcon,
-  hash: HashIcon,
-  pen: PenIcon,
-  book: BookOpenIcon,
-  music: MusicNoteIcon,
-  landmark: LandmarkIcon,
-  droplet: DropletIcon,
-  prayer: PrayerFigureIcon,
-  layers: LayersIcon,
-  sparkle: SparkleIcon,
-  scroll: ScrollIcon,
-  sunmoon: SunMoonIcon,
-  compass: CompassIcon,
 }

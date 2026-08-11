@@ -90,8 +90,14 @@ réorganiser les deux parcours.
 
 ## Pistes d'amélioration restantes
 
-- Sourates au-delà d'Al-Fâtiha reliées depuis le module Salat
 - Profils multiples (actuellement une seule progression par appareil/navigateur — l'export/import JSON permet un contournement manuel)
-- Élargir la couverture de tests aux composants (store et logique métier couverts : `arabic.ts`, `progress.ts`, `gamification.ts`)
 - Icônes PWA générées automatiquement à partir du favicon (`@vite-pwa/assets-generator`) — à remplacer par un vrai visuel si besoin d'une identité plus travaillée
-- Recherche limitée aux Noms d'Allah, aux Prophètes et à la palette de commande (niveau page) — pas encore de recherche plein texte sur le Vocabulaire ou dans le Coran
+- Recherche limitée aux items indexés dans la palette de commande (modules, vocabulaire, Noms d'Allah, prophètes, sourates) — pas encore de recherche plein texte à l'intérieur du texte des versets ou des récits
+
+## Fait récemment
+
+- Sourates au-delà d'Al-Fâtiha reliées depuis le module Salat, avec quelques suggestions de sourates courtes pour la 2e lecture
+- Translittération phonétique affichée sous chaque verset (`en.transliteration` via alquran.cloud), avec bouton pour la masquer/afficher, y compris pour les versets mémorisés
+- Recherche plein texte étendue dans la palette de commande (`Ctrl/Cmd+K`) : vocabulaire, Noms d'Allah, prophètes et sourates, en plus des modules et pages transverses
+- Couverture de tests élargie aux composants (`McqQuiz`, `CommandPalette`) et à `lib/quiz.ts`, via Vitest + Testing Library (voir `src/test/setup.ts`)
+- Intégration continue (`.github/workflows/ci.yml`) : lint, tests et build sur chaque push/PR vers `main`

@@ -16,7 +16,8 @@ import { akhlaqLessons, hijriMonths, pillarsOfFaith, pillarsOfIslam } from '../d
 import { TOTAL_QURAN_VERSES } from '../lib/quranApi'
 import { useProgress } from '../store/progress'
 import ProgressBar from '../components/ProgressBar'
-import { LightbulbIcon, RefreshIcon, moduleIcons } from '../components/icons'
+import { LightbulbIcon, RefreshIcon } from '../components/icons'
+import { moduleIcons } from '../components/moduleIcons'
 
 export default function Home() {
   const masteredLetters = useProgress((s) => s.masteredLetters)

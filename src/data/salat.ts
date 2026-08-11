@@ -107,6 +107,14 @@ export const prayerSteps: PrayerStep[] = [
       'Les mains posées sur la poitrine (droite sur gauche), on récite d\'abord Al-Fâtiha, puis une autre sourate ou quelques versets (aux 2 premières rak\'ât).',
     duas: [],
     linkToFatiha: true,
+    // Sourates courtes, parmi les plus lues en 2e position par les débutants (Juz Amma).
+    suggestedSurahs: [
+      { number: 112, name: 'الإخلاص', englishName: 'Al-Ikhlaas' },
+      { number: 113, name: 'الفلق', englishName: 'Al-Falaq' },
+      { number: 114, name: 'الناس', englishName: 'An-Naas' },
+      { number: 108, name: 'الكوثر', englishName: 'Al-Kawthar' },
+      { number: 103, name: 'العصر', englishName: 'Al-Asr' },
+    ],
     image: qiyamPhoto,
   },
   {

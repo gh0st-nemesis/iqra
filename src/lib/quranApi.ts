@@ -1,6 +1,7 @@
 // Client léger pour l'API publique et gratuite alquran.cloud (aucune clé requise).
 // Doc : https://alquran.cloud/api
 // Texte : édition "quran-uthmani" (graphie coranique avec tashkîl complet)
+// Phonétique : édition "en.transliteration" (translittération latine, une ayah = un texte)
 // Audio : édition "ar.alafasy" (récitation de Mishary Alafasy, une ayah = un fichier mp3)
 
 const BASE_URL = 'https://api.alquran.cloud/v1'
@@ -17,6 +18,7 @@ export interface SurahMeta {
 export interface Verse {
   numberInSurah: number
   text: string
+  transliteration: string | null
   audioUrl: string | null
 }
 
@@ -46,12 +48,14 @@ export async function fetchSurahDetail(number: number): Promise<SurahDetail> {
   const data = await getJson<
     [
       { number: number; name: string; englishName: string; englishNameTranslation: string; revelationType: 'Meccan' | 'Medinan'; ayahs: { numberInSurah: number; text: string }[] },
+      { ayahs: { numberInSurah: number; text: string }[] },
       { ayahs: { numberInSurah: number; audio: string }[] },
     ]
-  >(`/surah/${number}/editions/quran-uthmani,ar.alafasy`)
+  >(`/surah/${number}/editions/quran-uthmani,en.transliteration,ar.alafasy`)
 
-  const [textEdition, audioEdition] = data
+  const [textEdition, transliterationEdition, audioEdition] = data
   const audioByNumber = new Map(audioEdition.ayahs.map((a) => [a.numberInSurah, a.audio]))
+  const transliterationByNumber = new Map(transliterationEdition.ayahs.map((a) => [a.numberInSurah, a.text]))
 
   return {
     number: textEdition.number,
@@ -63,6 +67,7 @@ export async function fetchSurahDetail(number: number): Promise<SurahDetail> {
     verses: textEdition.ayahs.map((a) => ({
       numberInSurah: a.numberInSurah,
       text: a.text,
+      transliteration: transliterationByNumber.get(a.numberInSurah) ?? null,
       audioUrl: audioByNumber.get(a.numberInSurah) ?? null,
     })),
   }

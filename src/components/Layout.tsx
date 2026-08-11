@@ -17,8 +17,8 @@ import {
   StarIcon,
   SunIcon,
   XIcon,
-  moduleIcons,
 } from './icons'
+import { moduleIcons } from './moduleIcons'
 
 export default function Layout() {
   const xp = useProgress((s) => s.xp)
