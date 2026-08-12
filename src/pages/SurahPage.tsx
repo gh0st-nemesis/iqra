@@ -104,7 +104,8 @@ export default function SurahPage() {
               {surah.numberOfAyahs} versets
             </p>
             <h1 className="mb-1 font-arabic text-4xl">{surah.name}</h1>
-            <p className="text-emerald-100">{surah.englishNameTranslation}</p>
+            <p className="font-semibold text-emerald-50">{surah.englishName}</p>
+            <p className="text-sm italic text-emerald-200">{surah.englishNameTranslation}</p>
             <div className="mt-4 flex flex-wrap items-center gap-2">
               <button
                 onClick={() => playVerse(1, true)}

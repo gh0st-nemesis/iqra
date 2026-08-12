@@ -128,7 +128,8 @@ export default function QuranPage() {
                     <p className="text-xs font-medium text-brand-400 dark:text-slate-500">
                       {s.number}. {s.revelationType === 'Meccan' ? 'Mecquoise' : 'Médinoise'} · {s.numberOfAyahs} versets
                     </p>
-                    <p className="font-bold text-brand-800 dark:text-slate-100">{s.englishNameTranslation}</p>
+                    <p className="font-bold text-brand-800 dark:text-slate-100">{s.englishName}</p>
+                    <p className="text-xs italic text-brand-400 dark:text-slate-500">{s.englishNameTranslation}</p>
                   </div>
                   <p className="font-arabic text-2xl text-brand-700 dark:text-slate-300">{s.name}</p>
                 </Link>
