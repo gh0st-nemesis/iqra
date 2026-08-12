@@ -171,6 +171,7 @@ export default function SurahPage() {
                             : 'border-brand-100 text-brand-400 hover:border-sand-300 hover:text-sand-500 dark:border-slate-700 dark:text-slate-500 dark:hover:border-amber-600 dark:hover:text-amber-500'
                         }`}
                         title={isMemorized ? 'Retirer de la mémorisation' : 'Marquer comme mémorisé'}
+                        aria-label={isMemorized ? 'Retirer de la mémorisation' : 'Marquer comme mémorisé'}
                       >
                         <BookmarkIcon className="h-4 w-4" />
                       </button>
@@ -179,6 +180,7 @@ export default function SurahPage() {
                         disabled={!verse.audioUrl}
                         className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-600 text-white transition hover:bg-emerald-700 disabled:bg-brand-200 dark:disabled:bg-slate-700"
                         title="Écouter ce verset"
+                        aria-label="Écouter ce verset"
                       >
                         {isPlaying ? <Volume2Icon className="h-4 w-4" /> : <PlayIcon className="h-4 w-4" />}
                       </button>

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { alphabet, getLetterForms } from '../data/alphabet'
+import { alphabet, getLetterAudioText, getLetterForms } from '../data/alphabet'
 import { useProgress } from '../store/progress'
 import AudioButton from '../components/AudioButton'
 import McqQuiz, { type McqQuestion } from '../components/McqQuiz'
@@ -107,7 +107,7 @@ export default function AlphabetPage() {
                 <p className="text-3xl font-arabic text-brand-800 dark:text-slate-100">{selected.name}</p>
                 <p className="text-sm text-brand-500 dark:text-slate-400">Translittération : « {selected.transliteration} »</p>
               </div>
-              <AudioButton text={selected.char} size="lg" />
+              <AudioButton text={getLetterAudioText(selected)} label={selected.name} size="lg" />
             </div>
 
             <div className="mb-4 grid grid-cols-4 gap-2 text-center">
@@ -151,7 +151,7 @@ export default function AlphabetPage() {
                   {selected.exampleTransliteration} — {selected.exampleMeaning}
                 </p>
               </div>
-              <AudioButton text={selected.exampleWord} size="sm" />
+              <AudioButton text={selected.exampleWord} label={selected.exampleTransliteration} size="sm" />
             </div>
 
             <button

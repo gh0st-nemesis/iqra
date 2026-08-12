@@ -342,6 +342,16 @@ export const alphabet: ArabicLetter[] = [
   },
 ]
 
+// Texte à donner à la synthèse vocale (voir components/AudioButton.tsx) pour "faire entendre" une
+// lettre isolée. On ne peut pas lui faire lire `letter.char` tel quel : une consonne arabe seule,
+// sans aucune voyelle courte, n'est pas un son que les moteurs de synthèse vocale savent produire
+// (contrairement à un mot ou une syllabe vocalisée comme sur la page Harakat) — le bouton semblait
+// alors cliquable mais restait silencieux. On lit à la place le nom traditionnel de la lettre (ex.
+// « باء » pour Bā'), qui est un vrai mot arabe vocalisé et donc correctement prononcé.
+export function getLetterAudioText(letter: ArabicLetter): string {
+  return letter.name.split(' (')[0]
+}
+
 export function getLetterForms(letter: ArabicLetter) {
   const TATWEEL = 'ـ'
   if (!letter.connectsToNext) {

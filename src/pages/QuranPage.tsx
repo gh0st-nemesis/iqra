@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { fetchSurahList, JUZ_AMMA_RANGE, type SurahMeta } from '../lib/quranApi'
+import { surahIndex } from '../data/surahIndex'
 import { useProgress } from '../store/progress'
 import { usePageTitle } from '../lib/usePageTitle'
 import {
@@ -33,6 +34,10 @@ export default function QuranPage() {
   }, [])
 
   const visible = surahs?.filter((s) => showAll || (s.number >= JUZ_AMMA_RANGE.from && s.number <= JUZ_AMMA_RANGE.to))
+
+  // Index statique (pas d'appel réseau) pour retrouver le nom translittéré d'une sourate déjà
+  // mémorisée, même si `surahs` (issu de l'API) n'a pas encore fini de charger.
+  const englishNameByNumber = useMemo(() => new Map(surahIndex.map((s) => [s.number, s.englishName])), [])
 
   const memorizedBySurah = useMemo(() => {
     const map = new Map<number, { surahName: string; verses: typeof memorizedVerses }>()
@@ -161,7 +166,7 @@ export default function QuranPage() {
                       to={`/coran/${surahNumber}`}
                       className="text-sm font-bold text-brand-700 hover:underline dark:text-slate-200"
                     >
-                      Sourate {surahNumber}
+                      Sourate {surahNumber} · {englishNameByNumber.get(surahNumber)}
                     </Link>
                     <span className="font-arabic text-lg text-brand-500 dark:text-slate-400">{surahName}</span>
                   </div>
@@ -189,6 +194,7 @@ export default function QuranPage() {
                           disabled={!v.audioUrl}
                           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white transition hover:bg-emerald-700 disabled:bg-brand-200 dark:disabled:bg-slate-700"
                           title="Écouter ce verset"
+                          aria-label="Écouter ce verset"
                         >
                           {playingKey === v.key ? <Volume2Icon className="h-4 w-4" /> : <PlayIcon className="h-4 w-4" />}
                         </button>
