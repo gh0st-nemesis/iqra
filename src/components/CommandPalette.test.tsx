@@ -53,6 +53,27 @@ describe('CommandPalette', () => {
     expect(screen.getByText(/Aucun résultat pour/)).toBeInTheDocument()
   })
 
+  it('trouve une sourate malgré une voyelle non doublée (Fatiha au lieu de Faatiha)', async () => {
+    const user = userEvent.setup()
+    renderPalette()
+    await user.type(screen.getByPlaceholderText('Aller à… (module, page)'), 'Fatiha')
+    expect(screen.getByText(/Al-Faatiha/)).toBeInTheDocument()
+  })
+
+  it('trouve une sourate malgré un "h" final ajouté (Waqiah au lieu de Waaqia)', async () => {
+    const user = userEvent.setup()
+    renderPalette()
+    await user.type(screen.getByPlaceholderText('Aller à… (module, page)'), 'Waqiah')
+    expect(screen.getByText(/Al-Waaqia/)).toBeInTheDocument()
+  })
+
+  it('trouve une sourate malgré un espace au lieu d\'un tiret (Al Haqqah au lieu de Al-Haaqqa)', async () => {
+    const user = userEvent.setup()
+    renderPalette()
+    await user.type(screen.getByPlaceholderText('Aller à… (module, page)'), 'Al Haqqah')
+    expect(screen.getByText(/Al-Haaqqa/)).toBeInTheDocument()
+  })
+
   it('ferme la palette avec Échap', async () => {
     const user = userEvent.setup()
     const { onClose } = renderPalette()

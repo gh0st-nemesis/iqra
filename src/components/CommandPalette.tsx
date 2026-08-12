@@ -68,6 +68,23 @@ const searchOnlyItems: PaletteItem[] = [
 
 const MAX_RESULTS = 50
 
+// Normalisation "phonétique" approximative pour retrouver une sourate/un nom malgré les variantes
+// courantes de translittération : tirets/apostrophes différents, voyelles doublées ou non
+// (Faatiha/Fatiha), "h" final de la tâ marbûta parfois omis (Baqara/Baqarah, Waaqia/Waqiah).
+// N'affecte pas la recherche en écriture arabe (les lettres arabes ne matchent pas [a-z0-9] et sont
+// donc simplement ignorées ici) ni la recherche exacte habituelle, utilisée comme premier filtre.
+function normalizeLatinPhonetic(s: string): string {
+  return s
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ') // tirets, apostrophes, lettres arabes, accents... -> espace
+    .replace(/(.)\1+/g, '$1') // voyelles/consonnes doublées -> une seule (aa -> a, qq -> q...)
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => word.replace(/([aeiou])h$/, '$1')) // "h" final après voyelle -> supprimé
+    .join(' ')
+    .trim()
+}
+
 interface CommandPaletteProps {
   open: boolean
   onClose: () => void
@@ -84,8 +101,16 @@ export default function CommandPalette({ open, onClose }: CommandPaletteProps) {
     const q = query.trim().toLowerCase()
     if (!q) return browseItems
     const pool = [...browseItems, ...searchOnlyItems]
+    // Repli phonétique : seulement si la requête normalisée reste assez longue, pour éviter qu'une
+    // requête sans résultat (ex. répétition d'une seule lettre) ne finisse par tout matcher.
+    const normQ = normalizeLatinPhonetic(q)
+    const useFallback = normQ.length >= 3
     return pool
-      .filter((i) => i.label.toLowerCase().includes(q) || i.description?.toLowerCase().includes(q))
+      .filter((i) => {
+        const hay = `${i.label} ${i.description ?? ''}`.toLowerCase()
+        if (hay.includes(q)) return true
+        return useFallback && normalizeLatinPhonetic(hay).includes(normQ)
+      })
       .slice(0, MAX_RESULTS)
   }, [query])
 

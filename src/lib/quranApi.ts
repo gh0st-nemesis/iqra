@@ -9,7 +9,13 @@ const BASE_URL = 'https://api.alquran.cloud/v1'
 export interface SurahMeta {
   number: number
   name: string // nom en arabe
+  // Noms hérités tels quels du schéma de l'API alquran.cloud (d'où le préfixe "english", trompeur :
+  // aucun des deux n'est une traduction en français). À afficher en priorité dans l'UI, car c'est la
+  // forme la plus reconnaissable pour qui ne lit pas l'arabe : translittération phonétique latine du
+  // nom (ex. "Al-Faatiha", "Al-Haaqqa").
   englishName: string
+  // Traduction du *sens* du nom, en anglais (ex. "The Opening", "The Reality") — à n'afficher qu'en
+  // complément, jamais à la place de `englishName`.
   englishNameTranslation: string
   numberOfAyahs: number
   revelationType: 'Meccan' | 'Medinan'
