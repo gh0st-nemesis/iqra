@@ -6,13 +6,52 @@ import { harakat } from '../data/harakat'
 import { readingWords } from '../data/reading'
 import { vocabWords } from '../data/vocabulary'
 import { namesOfAllah } from '../data/namesOfAllah'
-import { useProgress } from '../store/progress'
+import { useProgress, todayISO } from '../store/progress'
+import type { MemorizedVerse } from '../types'
+import { isDue, type SrsCard, type SrsQuality } from '../lib/srs'
 import McqQuiz, { type McqQuestion } from '../components/McqQuiz'
 import { buildChoices, shuffle } from '../lib/quiz'
 import { usePageTitle } from '../lib/usePageTitle'
-import { CheckCircleIcon, RefreshIcon, TrophyIcon } from '../components/icons'
+import { CheckCircleIcon, RefreshIcon, RepeatIcon, TrophyIcon } from '../components/icons'
 
 const MAX_QUESTIONS = 15
+
+type RevisionTab = 'quiz' | 'srs'
+
+interface SrsQueueItem {
+  srsId: string
+  front: string
+  back: string
+  meta: string
+}
+
+// Construit la file des cartes dues aujourd'hui (versets mémorisés + vocabulaire maîtrisé),
+// à partir des cartes SM-2 stockées et des données correspondantes.
+function buildSrsQueue(srsCards: Record<string, SrsCard>, memorizedVerses: MemorizedVerse[], today: string): SrsQueueItem[] {
+  const verseByKey = new Map(memorizedVerses.map((v) => [v.key, v]))
+  const items: SrsQueueItem[] = []
+
+  for (const [srsId, card] of Object.entries(srsCards)) {
+    if (!isDue(card, today)) continue
+
+    if (srsId.startsWith('verse:')) {
+      const verse = verseByKey.get(srsId.slice('verse:'.length))
+      if (!verse) continue
+      items.push({
+        srsId,
+        front: verse.text,
+        back: verse.transliteration ?? '(pas de translittération enregistrée)',
+        meta: `${verse.surahName} · verset ${verse.verseNumber}`,
+      })
+    } else if (srsId.startsWith('vocab:')) {
+      const word = vocabWords.find((w) => w.id === srsId.slice('vocab:'.length))
+      if (!word) continue
+      items.push({ srsId, front: word.arabic, back: word.meaning, meta: word.transliteration })
+    }
+  }
+
+  return items
+}
 
 function buildQuestions(
   weakLetters: string[],
@@ -118,6 +157,8 @@ function buildQuestions(
 
 export default function RevisionPage() {
   usePageTitle('Révision')
+  const [tab, setTab] = useState<RevisionTab>('quiz')
+
   const weakLetters = useProgress((s) => s.weakLetters)
   const weakNumbers = useProgress((s) => s.weakNumbers)
   const weakHarakat = useProgress((s) => s.weakHarakat)
@@ -131,10 +172,26 @@ export default function RevisionPage() {
   const markNameMastered = useProgress((s) => s.markNameMastered)
   const markWordMastered = useProgress((s) => s.markWordMastered)
 
+  const srsCards = useProgress((s) => s.srsCards)
+  const memorizedVerses = useProgress((s) => s.memorizedVerses)
+  const reviewSrsCard = useProgress((s) => s.reviewSrsCard)
+
   const [questions] = useState<McqQuestion[]>(() =>
     buildQuestions(weakLetters, weakNumbers, weakHarakat, weakVocab, weakNames, weakWords),
   )
   const [result, setResult] = useState<{ score: number; total: number } | null>(null)
+
+  const [srsQueue] = useState<SrsQueueItem[]>(() => buildSrsQueue(srsCards, memorizedVerses, todayISO()))
+  const [srsIndex, setSrsIndex] = useState(0)
+  const [srsRevealed, setSrsRevealed] = useState(false)
+  const currentSrsItem = srsQueue[srsIndex]
+
+  function handleSrsReview(quality: SrsQuality) {
+    if (!currentSrsItem) return
+    reviewSrsCard(currentSrsItem.srsId, quality)
+    setSrsRevealed(false)
+    setSrsIndex((i) => i + 1)
+  }
 
   function handleCorrect(taggedId: string) {
     const [category, id] = taggedId.split(':')
@@ -155,11 +212,113 @@ export default function RevisionPage() {
         <RefreshIcon className="h-6 w-6 text-brand-600 dark:text-brand-400" /> Révision
       </h1>
       <p className="mb-6 text-sm text-brand-500 dark:text-slate-400">
-        Un quiz ciblé, mélangeant lettres, chiffres, harakat, mots de lecture, vocabulaire et noms d&apos;Allah où tu
-        t&apos;es trompé récemment.
+        Un quiz ciblé sur tes erreurs récentes, et une file de répétition espacée pour ancrer durablement le hifz et
+        le vocabulaire déjà maîtrisés.
       </p>
 
-      {questions.length === 0 ? (
+      <div className="mb-6 flex gap-2 rounded-full bg-brand-100 p-1 dark:bg-slate-800">
+        <button
+          onClick={() => setTab('quiz')}
+          className={`flex-1 rounded-full px-4 py-1.5 text-sm font-semibold transition ${
+            tab === 'quiz' ? 'bg-white text-brand-700 shadow-sm dark:bg-slate-700 dark:text-slate-100' : 'text-brand-500 dark:text-slate-400'
+          }`}
+        >
+          Quiz ciblé
+        </button>
+        <button
+          onClick={() => setTab('srs')}
+          className={`flex-1 rounded-full px-4 py-1.5 text-sm font-semibold transition ${
+            tab === 'srs' ? 'bg-white text-brand-700 shadow-sm dark:bg-slate-700 dark:text-slate-100' : 'text-brand-500 dark:text-slate-400'
+          }`}
+        >
+          Répétition espacée ({srsQueue.length})
+        </button>
+      </div>
+
+      {tab === 'srs' && (
+        <div>
+          {srsQueue.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-brand-200 bg-white p-8 text-center dark:border-slate-700 dark:bg-slate-800">
+              <CheckCircleIcon className="mx-auto mb-3 h-10 w-10 text-green-500" />
+              <p className="mb-1 font-semibold text-brand-800 dark:text-slate-100">Rien à réviser aujourd&apos;hui !</p>
+              <p className="text-sm text-brand-500 dark:text-slate-400">
+                Les versets marqués mémorisés (module Coran) et le vocabulaire maîtrisé entrent automatiquement dans
+                une file de révision espacée : reviens ici quand une carte arrivera à échéance.
+              </p>
+            </div>
+          ) : srsIndex >= srsQueue.length ? (
+            <div className="rounded-2xl border border-brand-100 bg-white p-8 text-center shadow-sm dark:border-slate-700 dark:bg-slate-800">
+              <TrophyIcon className="mx-auto mb-3 h-10 w-10 text-sand-500 dark:text-amber-400" />
+              <p className="mb-1 text-xl font-bold text-brand-800 dark:text-slate-100">
+                {srsQueue.length} carte{srsQueue.length > 1 ? 's' : ''} révisée{srsQueue.length > 1 ? 's' : ''} !
+              </p>
+              <p className="mb-5 text-sm text-brand-500 dark:text-slate-400">
+                La prochaine échéance de chacune a été recalculée automatiquement.
+              </p>
+              <Link
+                to="/"
+                className="inline-block rounded-full bg-brand-600 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-700"
+              >
+                Retour à l&apos;accueil
+              </Link>
+            </div>
+          ) : (
+            <div className="rounded-2xl border border-brand-100 bg-white p-8 text-center shadow-sm dark:border-slate-700 dark:bg-slate-800">
+              <p className="mb-3 flex items-center justify-center gap-1.5 text-xs font-medium text-brand-400 dark:text-slate-500">
+                <RepeatIcon className="h-3.5 w-3.5" /> {currentSrsItem.meta}
+              </p>
+              <p className="arabic-xl mb-6 text-right text-2xl leading-relaxed text-brand-800 dark:text-slate-100">
+                {currentSrsItem.front}
+              </p>
+
+              {srsRevealed ? (
+                <>
+                  <p className="mb-6 text-sm italic text-brand-600 dark:text-slate-300">{currentSrsItem.back}</p>
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                    <button
+                      onClick={() => handleSrsReview('again')}
+                      className="rounded-full bg-red-100 px-3 py-2 text-xs font-semibold text-red-700 hover:bg-red-200 dark:bg-red-950/40 dark:text-red-300"
+                    >
+                      Encore
+                    </button>
+                    <button
+                      onClick={() => handleSrsReview('hard')}
+                      className="rounded-full bg-amber-100 px-3 py-2 text-xs font-semibold text-amber-700 hover:bg-amber-200 dark:bg-amber-950/40 dark:text-amber-300"
+                    >
+                      Difficile
+                    </button>
+                    <button
+                      onClick={() => handleSrsReview('good')}
+                      className="rounded-full bg-emerald-100 px-3 py-2 text-xs font-semibold text-emerald-700 hover:bg-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300"
+                    >
+                      Bien
+                    </button>
+                    <button
+                      onClick={() => handleSrsReview('easy')}
+                      className="rounded-full bg-brand-100 px-3 py-2 text-xs font-semibold text-brand-700 hover:bg-brand-200 dark:bg-slate-700 dark:text-slate-200"
+                    >
+                      Facile
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <button
+                  onClick={() => setSrsRevealed(true)}
+                  className="rounded-full bg-brand-600 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-700"
+                >
+                  Afficher la réponse
+                </button>
+              )}
+
+              <p className="mt-6 text-xs text-brand-400 dark:text-slate-500">
+                Carte {srsIndex + 1} / {srsQueue.length}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {tab === 'quiz' && (questions.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-brand-200 bg-white p-8 text-center dark:border-slate-700 dark:bg-slate-800">
           <CheckCircleIcon className="mx-auto mb-3 h-10 w-10 text-green-500" />
           <p className="mb-1 font-semibold text-brand-800 dark:text-slate-100">Rien à réviser pour le moment !</p>
@@ -188,7 +347,7 @@ export default function RevisionPage() {
         </div>
       ) : (
         <McqQuiz questions={questions} onFinish={(score, total) => setResult({ score, total })} onCorrectAnswer={handleCorrect} />
-      )}
+      ))}
     </div>
   )
 }
