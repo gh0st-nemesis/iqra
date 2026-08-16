@@ -28,10 +28,10 @@ npm run test     # lancer les tests (vitest)
 
 | Module | Contenu |
 |---|---|
-| **Alphabet** | Les 28 lettres, leurs 4 formes (isolée/initiale/médiane/finale), prononciation, quiz |
+| **Alphabet** | Les 28 lettres, leurs 4 formes (isolée/initiale/médiane/finale), prononciation, quiz, exercice de tracé au doigt/souris (canevas avec repère, score de recouvrement) |
 | **Chiffres** | Chiffres indo-arabes ٠-١٠ et leurs noms, quiz |
 | **Voyelles (Harakat)** | Fatha, kasra, damma, tanwîn, soukoun, chadda, madd, quiz |
-| **Lecture** | Constructeur de syllabes + exercices : reconstituer un mot lettre par lettre, puis s'entraîner à le prononcer (reconnaissance vocale si le navigateur le permet). 45 mots répartis sur 3 niveaux |
+| **Lecture** | Constructeur de syllabes + exercices : reconstituer un mot lettre par lettre, puis s'entraîner à le prononcer (reconnaissance vocale si le navigateur le permet). Mode dictée (le mot n'est révélé qu'une fois reconstitué à l'oreille). 45 mots répartis sur 3 niveaux |
 | **Vocabulaire** | Salutations, famille, maison, couleurs, corps humain, nourriture, temps/météo, école, phrases simples, familles de mots (racines), quiz |
 | **Tajwîd** | Règles de récitation (nûn sâkin, mîm sâkin, qalqalah, madd), avec quiz |
 
@@ -41,15 +41,17 @@ npm run test     # lancer les tests (vitest)
 |---|---|
 | **Ablutions** | Wudû (avec eau) et tayammum (à sec), étape par étape, avec invocations |
 | **La Salat** | Séquence complète d'une prière, les 5 prières quotidiennes, photos réelles par posture |
-| **Récitation coranique** | Texte + audio (vrais récitateurs) via l'API publique alquran.cloud, onglet Mémorisation (hifz) pour suivre les versets appris par cœur |
+| **Récitation coranique** | Texte + audio (vrais récitateurs) via l'API publique alquran.cloud, lecture en chaîne avec surlignage du verset en cours, défilement automatique, vitesse réglable (0.75x-1.25x) et bouton d'arrêt, onglet Mémorisation (hifz) pour suivre les versets appris par cœur |
 | **Noms d'Allah** | Les 99 Noms d'Allah (Al-Asmâ' al-Husnâ), leur sens, quiz |
 | **Les prophètes** | Les 25 prophètes cités nommément dans le Coran + Al-Mahdi en complément, récits courts, leçons, vocabulaire lié, quiz |
 | **Adhkar** | Invocations du quotidien (matin, soir, avant/après repas, entrée/sortie de maison, voyage…) |
 | **Connaissances** | Piliers de l'islam, piliers de la foi (Iman), akhlâq (comportement), calendrier hijri, avec quiz |
 
 Transverse :
-- **Révision** (`/revision`) — quiz ciblé sur les points où l'utilisateur s'est trompé récemment, tous modules à quiz confondus (accessible depuis le bandeau d'accueil quand il y a des points à réviser)
-- **Profil** (`/profil`) — récapitulatif de la progression, niveaux et badges, réglages d'apparence (thème, taille du texte, menu latéral étendu/réduit), rappels de série, export/import de la sauvegarde, réinitialisation de la progression
+- **Horaires & Qibla** (`/horaires-qibla`) — horaires des 5 prières (API aladhan.com) et direction de la Qibla (calcul local + boussole du téléphone en best-effort) à partir de la position de l'utilisateur
+- **Révision** (`/revision`) — quiz ciblé sur les points où l'utilisateur s'est trompé récemment, tous modules à quiz confondus, et onglet de répétition espacée (SM-2 léger) pour les versets mémorisés et le vocabulaire maîtrisé (accessible depuis le bandeau d'accueil quand il y a des points à réviser)
+- **Profil** (`/profil`) — récapitulatif de la progression, niveaux et badges, gestion des profils multiples (bascule, renommer, ajouter, supprimer), réglages d'apparence (thème, taille du texte, menu latéral étendu/réduit), rappels de série, export/import de la sauvegarde, réinitialisation de la progression
+- **Espace famille** (`/famille`) — tableau de bord comparant la progression (XP, série, lettres, versets) de tous les profils sur l'appareil
 - **À propos** (`/a-propos`) — posture éditoriale sur le contenu religieux : tradition suivie, sources, limites, confidentialité des données
 
 ## Gamification, PWA et accessibilité
@@ -78,9 +80,10 @@ src/
   components/   composants réutilisables (icônes SVG, quiz, audio, exercices...)
   data/         contenu pédagogique (lettres, chiffres, harakat, mots, tajwîd, salat, ablutions,
                 vocabulaire, noms d'Allah, prophètes, adhkar, connaissances)
-  lib/          utilitaires (API Coran, arabe, synthèse/reconnaissance vocale, quiz)
+  lib/          utilitaires (API Coran, horaires de prière, Qibla, arabe, synthèse/reconnaissance
+                vocale, quiz, répétition espacée, leçon du jour)
   pages/        une page par module
-  store/        progression utilisateur et thème (zustand)
+  store/        progression utilisateur, profils multiples, thème et réglages (zustand)
   types/        déclarations ambiantes (Web Speech API)
 ```
 
@@ -90,14 +93,22 @@ réorganiser les deux parcours.
 
 ## Pistes d'amélioration restantes
 
-- Profils multiples (actuellement une seule progression par appareil/navigateur — l'export/import JSON permet un contournement manuel)
 - Icônes PWA générées automatiquement à partir du favicon (`@vite-pwa/assets-generator`) — à remplacer par un vrai visuel si besoin d'une identité plus travaillée
 - Recherche limitée aux items indexés dans la palette de commande (modules, vocabulaire, Noms d'Allah, prophètes, sourates) — pas encore de recherche plein texte à l'intérieur du texte des versets ou des récits
+- Surlignage du Coran au niveau du verset, pas du mot : l'API ne fournit pas de timestamps mot-à-mot
+- Rappels de série toujours limités à la durée de vie de l'onglet ouvert (pas de Push API serveur)
+- `npm audit` signale des vulnérabilités connues sur `react-router-dom` (fix non-breaking disponible) et sur `sharp`/`@vite-pwa/assets-generator` (dev-only, non exécuté en prod) — à traiter dans un passage dédié aux dépendances
 
 ## Fait récemment
 
+- Profils multiples (`/profil`) et espace famille (`/famille`) : plusieurs progressions sur le même appareil, migration automatique de la progression existante sans perte
+- Répétition espacée (SM-2 léger) pour le hifz et le vocabulaire maîtrisé, nouvel onglet dans Révision
+- Parcours guidé "Leçon du jour" sur la Home, alternant entre les deux parcours selon la progression
+- Horaires de prière et direction de la Qibla (`/horaires-qibla`), à partir de la géolocalisation
+- Mode dictée dans le module Lecture, et exercice de tracé des lettres dans le module Alphabet
+- Lecture en chaîne du Coran améliorée : défilement automatique, vitesse réglable, arrêt possible
 - Sourates au-delà d'Al-Fâtiha reliées depuis le module Salat, avec quelques suggestions de sourates courtes pour la 2e lecture
 - Translittération phonétique affichée sous chaque verset (`en.transliteration` via alquran.cloud), avec bouton pour la masquer/afficher, y compris pour les versets mémorisés
 - Recherche plein texte étendue dans la palette de commande (`Ctrl/Cmd+K`) : vocabulaire, Noms d'Allah, prophètes et sourates, en plus des modules et pages transverses
-- Couverture de tests élargie aux composants (`McqQuiz`, `CommandPalette`) et à `lib/quiz.ts`, via Vitest + Testing Library (voir `src/test/setup.ts`)
+- Couverture de tests élargie aux composants (`McqQuiz`, `CommandPalette`) et à plusieurs modules de `lib/` et `store/`, via Vitest + Testing Library (voir `src/test/setup.ts`)
 - Intégration continue (`.github/workflows/ci.yml`) : lint, tests et build sur chaque push/PR vers `main`
