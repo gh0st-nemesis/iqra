@@ -4,10 +4,11 @@ import { readingWords } from '../data/reading'
 import { useProgress } from '../store/progress'
 import AudioButton from '../components/AudioButton'
 import WordExerciseFlow from '../components/WordExerciseFlow'
+import DictationExercise from '../components/DictationExercise'
 import McqQuiz, { type McqQuestion } from '../components/McqQuiz'
 import { buildChoices, pickRandom } from '../lib/quiz'
 import { usePageTitle } from '../lib/usePageTitle'
-import { BookOpenIcon, CheckIcon, TrophyIcon } from '../components/icons'
+import { BookOpenIcon, CheckIcon, EarIcon, TrophyIcon } from '../components/icons'
 
 const shortHarakat = [
   { id: 'fatha', symbol: 'َ', translit: 'a' },
@@ -20,7 +21,7 @@ const connectingLetters = alphabet.filter((l) => l.char !== 'ا')
 const EXERCISE_SET_SIZE = 6
 const QUIZ_SET_SIZE = 10
 
-type Tab = 'learn' | 'exercises' | 'quiz'
+type Tab = 'learn' | 'exercises' | 'dictation' | 'quiz'
 
 export default function ReadingPage() {
   usePageTitle('Lecture')
@@ -31,6 +32,8 @@ export default function ReadingPage() {
   const [revealed, setRevealed] = useState<Record<string, boolean>>({})
   const [exerciseWords, setExerciseWords] = useState<typeof readingWords | null>(null)
   const [exerciseDone, setExerciseDone] = useState(false)
+  const [dictationWords, setDictationWords] = useState<typeof readingWords | null>(null)
+  const [dictationDone, setDictationDone] = useState(false)
 
   const wordsRead = useProgress((s) => s.wordsRead)
   const markWordRead = useProgress((s) => s.markWordRead)
@@ -70,6 +73,11 @@ export default function ReadingPage() {
     setExerciseWords(pickRandom(filteredWords.length ? filteredWords : readingWords, EXERCISE_SET_SIZE))
   }
 
+  function startDictation() {
+    setDictationDone(false)
+    setDictationWords(pickRandom(filteredWords.length ? filteredWords : readingWords, EXERCISE_SET_SIZE))
+  }
+
   return (
     <div>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
@@ -92,6 +100,14 @@ export default function ReadingPage() {
             }`}
           >
             Exercices
+          </button>
+          <button
+            onClick={() => setTab('dictation')}
+            className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
+              tab === 'dictation' ? 'bg-white dark:bg-slate-800 text-brand-700 dark:text-slate-200 shadow-sm' : 'text-brand-500 dark:text-slate-400'
+            }`}
+          >
+            Dictée
           </button>
           <button
             onClick={() => setTab('quiz')}
@@ -265,6 +281,61 @@ export default function ReadingPage() {
               <p className="mb-5 text-sm text-brand-500 dark:text-slate-400">Lettres identifiées et prononciation entraînée pour chacun.</p>
               <button
                 onClick={() => setExerciseWords(null)}
+                className="rounded-full bg-brand-600 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-700"
+              >
+                Recommencer
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {tab === 'dictation' && (
+        <div>
+          <p className="mb-6 text-sm text-brand-500 dark:text-slate-400">
+            Le mot n&apos;est pas affiché : écoute-le (synthèse vocale), puis reconstitue-le lettre par lettre. Il ne
+            se révèle qu&apos;une fois correctement replacé.
+          </p>
+
+          {!dictationWords && (
+            <div className="mx-auto max-w-md rounded-2xl border border-brand-100 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 text-center shadow-sm">
+              <EarIcon className="mx-auto mb-3 h-8 w-8 text-brand-500 dark:text-slate-400" />
+              <p className="mb-4 text-sm font-medium text-brand-600 dark:text-slate-300">Choisis un niveau de difficulté, puis lance-toi :</p>
+              <div className="mb-5 flex justify-center gap-1 rounded-full bg-brand-100 dark:bg-slate-700 p-1 text-xs font-semibold">
+                {(['all', 1, 2, 3] as const).map((d) => (
+                  <button
+                    key={d}
+                    onClick={() => setDifficultyFilter(d)}
+                    className={`rounded-full px-3 py-1 transition ${
+                      difficultyFilter === d ? 'bg-white dark:bg-slate-800 text-brand-700 dark:text-slate-200 shadow-sm' : 'text-brand-500 dark:text-slate-400'
+                    }`}
+                  >
+                    {d === 'all' ? 'Tous' : `Niveau ${d}`}
+                  </button>
+                ))}
+              </div>
+              <button
+                onClick={startDictation}
+                className="rounded-full bg-brand-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700"
+              >
+                Commencer ({Math.min(EXERCISE_SET_SIZE, filteredWords.length || readingWords.length)} mots)
+              </button>
+            </div>
+          )}
+
+          {dictationWords && !dictationDone && (
+            <DictationExercise words={dictationWords} onFinish={() => setDictationDone(true)} />
+          )}
+
+          {dictationWords && dictationDone && (
+            <div className="mx-auto max-w-md rounded-2xl border border-brand-100 dark:border-slate-700 bg-white dark:bg-slate-800 p-8 text-center shadow-sm">
+              <TrophyIcon className="mx-auto mb-3 h-10 w-10 text-sand-500 dark:text-amber-400" />
+              <p className="mb-1 text-xl font-bold text-brand-800 dark:text-slate-100">
+                {dictationWords.length} mots écrits à l&apos;oreille !
+              </p>
+              <p className="mb-5 text-sm text-brand-500 dark:text-slate-400">Bel exercice d&apos;écoute et de reconstitution.</p>
+              <button
+                onClick={() => setDictationWords(null)}
                 className="rounded-full bg-brand-600 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-700"
               >
                 Recommencer

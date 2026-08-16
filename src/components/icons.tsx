@@ -478,6 +478,15 @@ export function ClockIcon(props: IconProps) {
   )
 }
 
+export function EarIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="M8 13a5 5 0 0 1 5-8 5.5 5.5 0 0 1 5.5 5.5c0 2-1 3-2 4s-1.5 1.8-1.5 3a3 3 0 0 1-6 0" />
+      <path d="M8 13c0 2 1 3 2.5 3" />
+    </svg>
+  )
+}
+
 export function SearchIcon(props: IconProps) {
   return (
     <svg {...base(props)}>
