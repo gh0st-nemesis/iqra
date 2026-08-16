@@ -1,4 +1,5 @@
-import { useRef, useState, type ChangeEvent } from 'react'
+import { useRef, useState, type ChangeEvent, type FormEvent } from 'react'
+import { Link } from 'react-router-dom'
 import { alphabet } from '../data/alphabet'
 import { numbers } from '../data/numbers'
 import { harakat } from '../data/harakat'
@@ -12,6 +13,7 @@ import { prophets } from '../data/prophets'
 import { adhkarItems } from '../data/adhkar'
 import { akhlaqLessons, hijriMonths, pillarsOfFaith, pillarsOfIslam } from '../data/knowledge'
 import { useProgress } from '../store/progress'
+import { useProfiles, type Profile } from '../store/profiles'
 import { useTheme } from '../store/theme'
 import { useSettings, TEXT_SCALE_LABELS, type TextScale } from '../store/settings'
 import { requestNotificationPermission, cancelStreakReminder, isNotificationSupported } from '../lib/notifications'
@@ -42,6 +44,7 @@ import {
   SunMoonIcon,
   TrophyIcon,
   UploadIcon,
+  UsersIcon,
 } from '../components/icons'
 import ProgressBar from '../components/ProgressBar'
 
@@ -103,6 +106,38 @@ export default function ProfilePage() {
   const [confirmingReset, setConfirmingReset] = useState(false)
   const [importMessage, setImportMessage] = useState<{ ok: boolean; text: string } | null>(null)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
+
+  const profiles = useProfiles((s) => s.profiles)
+  const activeProfileId = useProfiles((s) => s.activeProfileId)
+  const switchProfile = useProfiles((s) => s.switchProfile)
+  const addProfile = useProfiles((s) => s.addProfile)
+  const renameProfile = useProfiles((s) => s.renameProfile)
+  const deleteProfile = useProfiles((s) => s.deleteProfile)
+
+  const [showAddProfile, setShowAddProfile] = useState(false)
+  const [newProfileName, setNewProfileName] = useState('')
+  const [renamingId, setRenamingId] = useState<string | null>(null)
+  const [renameValue, setRenameValue] = useState('')
+  const [confirmingDeleteId, setConfirmingDeleteId] = useState<string | null>(null)
+
+  function handleAddProfile(e: FormEvent) {
+    e.preventDefault()
+    if (!newProfileName.trim()) return
+    addProfile(newProfileName)
+    setNewProfileName('')
+    setShowAddProfile(false)
+  }
+
+  function startRename(p: Profile) {
+    setRenamingId(p.id)
+    setRenameValue(p.name)
+  }
+
+  function submitRename(e: FormEvent) {
+    e.preventDefault()
+    if (renamingId) renameProfile(renamingId, renameValue)
+    setRenamingId(null)
+  }
 
   const level = getLevelInfo(xp)
   const badgeTotals = {
@@ -222,6 +257,130 @@ export default function ProfilePage() {
       <h1 className="mb-6 flex items-center gap-2 text-2xl font-bold text-brand-800 dark:text-slate-100">
         <SettingsIcon className="h-6 w-6 text-brand-600 dark:text-brand-400" /> Profil &amp; réglages
       </h1>
+
+      <section className="mb-6 rounded-2xl border border-brand-100 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="flex items-center gap-1.5 text-sm font-bold uppercase tracking-wide text-brand-500 dark:text-slate-400">
+            <UsersIcon className="h-4 w-4" /> Profils sur cet appareil
+          </h2>
+          <Link
+            to="/famille"
+            className="text-xs font-semibold text-brand-600 underline decoration-dotted hover:text-brand-700 dark:text-brand-400"
+          >
+            Espace famille →
+          </Link>
+        </div>
+
+        <div className="space-y-2">
+          {profiles.map((p) => {
+            const isActive = p.id === activeProfileId
+            return (
+              <div
+                key={p.id}
+                className={`flex flex-wrap items-center gap-2 rounded-xl border p-2.5 ${
+                  isActive
+                    ? 'border-brand-400 bg-brand-50 dark:border-brand-700 dark:bg-brand-950/20'
+                    : 'border-brand-100 dark:border-slate-700'
+                }`}
+              >
+                {renamingId === p.id ? (
+                  <form onSubmit={submitRename} className="flex flex-1 items-center gap-2">
+                    <input
+                      autoFocus
+                      value={renameValue}
+                      onChange={(e) => setRenameValue(e.target.value)}
+                      className="flex-1 rounded-lg border border-brand-200 bg-white px-2 py-1 text-sm dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
+                    />
+                    <button type="submit" className="text-xs font-semibold text-brand-600 dark:text-brand-400">
+                      OK
+                    </button>
+                    <button type="button" onClick={() => setRenamingId(null)} className="text-xs text-brand-400 dark:text-slate-500">
+                      Annuler
+                    </button>
+                  </form>
+                ) : (
+                  <>
+                    <span className="flex-1 truncate text-sm font-semibold text-brand-800 dark:text-slate-100">
+                      {p.name}
+                      {isActive && (
+                        <span className="ml-1.5 text-xs font-normal text-emerald-600 dark:text-emerald-400">(actif)</span>
+                      )}
+                    </span>
+                    {!isActive && (
+                      <button
+                        onClick={() => switchProfile(p.id)}
+                        className="rounded-full bg-brand-100 px-3 py-1 text-xs font-semibold text-brand-700 hover:bg-brand-200 dark:bg-slate-700 dark:text-slate-200"
+                      >
+                        Basculer
+                      </button>
+                    )}
+                    <button
+                      onClick={() => startRename(p)}
+                      className="rounded-full px-2 py-1 text-xs text-brand-500 hover:bg-brand-50 dark:text-slate-400 dark:hover:bg-slate-700"
+                    >
+                      Renommer
+                    </button>
+                    {profiles.length > 1 &&
+                      (confirmingDeleteId === p.id ? (
+                        <>
+                          <button
+                            onClick={() => {
+                              deleteProfile(p.id)
+                              setConfirmingDeleteId(null)
+                            }}
+                            className="rounded-full bg-red-600 px-3 py-1 text-xs font-semibold text-white hover:bg-red-700"
+                          >
+                            Confirmer
+                          </button>
+                          <button onClick={() => setConfirmingDeleteId(null)} className="text-xs text-brand-400 dark:text-slate-500">
+                            Annuler
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          onClick={() => setConfirmingDeleteId(p.id)}
+                          className="rounded-full px-2 py-1 text-xs text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30"
+                        >
+                          Supprimer
+                        </button>
+                      ))}
+                  </>
+                )}
+              </div>
+            )
+          })}
+        </div>
+
+        {showAddProfile ? (
+          <form onSubmit={handleAddProfile} className="mt-3 flex items-center gap-2">
+            <input
+              autoFocus
+              value={newProfileName}
+              onChange={(e) => setNewProfileName(e.target.value)}
+              placeholder="Nom du nouveau profil"
+              className="flex-1 rounded-lg border border-brand-200 bg-white px-3 py-1.5 text-sm dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
+            />
+            <button type="submit" className="rounded-full bg-brand-600 px-4 py-1.5 text-xs font-semibold text-white hover:bg-brand-700">
+              Créer
+            </button>
+            <button type="button" onClick={() => setShowAddProfile(false)} className="text-xs text-brand-400 dark:text-slate-500">
+              Annuler
+            </button>
+          </form>
+        ) : (
+          <button
+            onClick={() => setShowAddProfile(true)}
+            className="mt-3 text-xs font-semibold text-brand-600 underline decoration-dotted hover:text-brand-700 dark:text-brand-400"
+          >
+            + Ajouter un profil
+          </button>
+        )}
+
+        <p className="mt-3 text-xs text-brand-400 dark:text-slate-500">
+          Créer un profil démarre une progression vierge (utile pour plusieurs enfants sur le même appareil) ; la
+          progression du profil actif est sauvegardée automatiquement en changeant de profil.
+        </p>
+      </section>
 
       <section className="mb-6 grid grid-cols-2 gap-4">
         <div className="rounded-2xl border border-brand-100 bg-white p-5 text-center shadow-sm dark:border-slate-700 dark:bg-slate-800">

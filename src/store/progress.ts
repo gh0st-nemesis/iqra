@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { MemorizedVerse } from '../types'
+import { createSrsCard, scheduleNext, type SrsCard, type SrsQuality } from '../lib/srs'
 
 interface ProgressState {
   xp: number
@@ -33,6 +34,10 @@ interface ProgressState {
   hijriMonthsSeen: string[]
   lastActiveDate: string | null
   streak: number
+  // Cartes de répétition espacée (SM-2 léger, voir src/lib/srs.ts), clé "verse:<key>" ou
+  // "vocab:<id>" -> planification. Créées automatiquement quand un verset est mémorisé ou un mot
+  // de vocabulaire maîtrisé (voir markVerseMemorized / markVocabMastered).
+  srsCards: Record<string, SrsCard>
 
   addXp: (amount: number) => void
   markLetterSeen: (id: string) => void
@@ -64,6 +69,7 @@ interface ProgressState {
   markAkhlaqSeen: (id: string) => void
   markHijriMonthSeen: (id: string) => void
   setReadingLevelCompleted: (level: number) => void
+  reviewSrsCard: (id: string, quality: SrsQuality) => void
   touchStreak: () => void
   resetProgress: () => void
   exportProgress: () => string
@@ -102,6 +108,7 @@ const DATA_KEYS = [
   'hijriMonthsSeen',
   'lastActiveDate',
   'streak',
+  'srsCards',
 ] as const satisfies readonly (keyof ProgressState)[]
 
 export function todayISO() {
@@ -149,6 +156,7 @@ export const useProgress = create<ProgressState>()(
       hijriMonthsSeen: [],
       lastActiveDate: null,
       streak: 0,
+      srsCards: {},
 
       addXp: (amount) => set({ xp: get().xp + amount }),
 
@@ -179,12 +187,20 @@ export const useProgress = create<ProgressState>()(
       markVerseMemorized: (verse) => {
         const exists = get().memorizedVerses.some((v) => v.key === verse.key)
         if (exists) return
-        set({ memorizedVerses: [...get().memorizedVerses, verse] })
+        const srsId = `verse:${verse.key}`
+        set({
+          memorizedVerses: [...get().memorizedVerses, verse],
+          srsCards: { ...get().srsCards, [srsId]: createSrsCard(todayISO()) },
+        })
         get().addXp(15)
       },
 
-      unmarkVerseMemorized: (key) =>
-        set({ memorizedVerses: get().memorizedVerses.filter((v) => v.key !== key) }),
+      unmarkVerseMemorized: (key) => {
+        const srsId = `verse:${key}`
+        const restSrs = { ...get().srsCards }
+        delete restSrs[srsId]
+        set({ memorizedVerses: get().memorizedVerses.filter((v) => v.key !== key), srsCards: restSrs })
+      },
 
       markWordRead: (id) => {
         const wasNew = !get().wordsRead.includes(id)
@@ -224,7 +240,9 @@ export const useProgress = create<ProgressState>()(
 
       markVocabMastered: (id) => {
         const wasNew = !get().masteredVocab.includes(id)
-        set({ masteredVocab: addUnique(get().masteredVocab, id), weakVocab: removeItem(get().weakVocab, id) })
+        const srsId = `vocab:${id}`
+        const srsCards = get().srsCards[srsId] ? get().srsCards : { ...get().srsCards, [srsId]: createSrsCard(todayISO()) }
+        set({ masteredVocab: addUnique(get().masteredVocab, id), weakVocab: removeItem(get().weakVocab, id), srsCards })
         if (wasNew) get().addXp(3)
       },
       markVocabWeak: (id) => set({ weakVocab: addUnique(get().weakVocab, id) }),
@@ -275,6 +293,12 @@ export const useProgress = create<ProgressState>()(
       setReadingLevelCompleted: (level) =>
         set({ readingLevelCompleted: Math.max(level, get().readingLevelCompleted) }),
 
+      reviewSrsCard: (id, quality) => {
+        const card = get().srsCards[id]
+        if (!card) return
+        set({ srsCards: { ...get().srsCards, [id]: scheduleNext(card, quality, todayISO()) } })
+      },
+
       touchStreak: () => {
         const today = todayISO()
         const last = get().lastActiveDate
@@ -316,6 +340,7 @@ export const useProgress = create<ProgressState>()(
           hijriMonthsSeen: [],
           lastActiveDate: null,
           streak: 0,
+          srsCards: {},
         }),
 
       exportProgress: () => {

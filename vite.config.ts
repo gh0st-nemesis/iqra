@@ -51,6 +51,17 @@ export default defineConfig({
             },
           },
           {
+            // Horaires de prière (aladhan.com) : réseau d'abord, cache en secours (le résultat dépend
+            // du jour, donc pas de cache-first ici).
+            urlPattern: /^https:\/\/api\.aladhan\.com\/.*/i,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'prayer-times',
+              expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 12 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+          {
             // Fichiers audio des récitations (CDN islamic.network) : immuables une fois publiés,
             // donc cache d'abord — un verset déjà écouté reste dispo hors-ligne.
             urlPattern: /^https:\/\/cdn\.islamic\.network\/quran\/audio.*/i,

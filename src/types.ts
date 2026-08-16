@@ -130,6 +130,7 @@ export type ModuleId =
   | 'prophets'
   | 'adhkar'
   | 'knowledge'
+  | 'qibla'
 
 export type ModuleIconName =
   | 'letters'
@@ -145,6 +146,7 @@ export type ModuleIconName =
   | 'scroll'
   | 'sunmoon'
   | 'compass'
+  | 'kaaba'
 
 // --- Vocabulaire ---
 

@@ -16,6 +16,7 @@ import {
   ScrollIcon,
   SunMoonIcon,
   CompassIcon,
+  KaabaIcon,
   type IconProps,
 } from './icons'
 
@@ -33,4 +34,5 @@ export const moduleIcons: Record<ModuleIconName, (props: IconProps) => JSX.Eleme
   scroll: ScrollIcon,
   sunmoon: SunMoonIcon,
   compass: CompassIcon,
+  kaaba: KaabaIcon,
 }

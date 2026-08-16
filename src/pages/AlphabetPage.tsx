@@ -2,12 +2,13 @@ import { useMemo, useState } from 'react'
 import { alphabet, getLetterAudioText, getLetterForms } from '../data/alphabet'
 import { useProgress } from '../store/progress'
 import AudioButton from '../components/AudioButton'
+import LetterTracing from '../components/LetterTracing'
 import McqQuiz, { type McqQuestion } from '../components/McqQuiz'
 import { buildChoices, pickRandom } from '../lib/quiz'
 import { usePageTitle } from '../lib/usePageTitle'
-import { InfoIcon, LettersIcon, StarIcon, TagIcon, TrophyIcon } from '../components/icons'
+import { InfoIcon, LettersIcon, PenIcon, StarIcon, TagIcon, TrophyIcon } from '../components/icons'
 
-type Tab = 'learn' | 'quiz'
+type Tab = 'learn' | 'tracing' | 'quiz'
 
 export default function AlphabetPage() {
   usePageTitle('Alphabet')
@@ -66,6 +67,14 @@ export default function AlphabetPage() {
             }`}
           >
             Apprendre
+          </button>
+          <button
+            onClick={() => setTab('tracing')}
+            className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
+              tab === 'tracing' ? 'bg-white dark:bg-slate-800 text-brand-700 dark:text-slate-200 shadow-sm' : 'text-brand-500 dark:text-slate-400'
+            }`}
+          >
+            Écriture
           </button>
           <button
             onClick={() => setTab('quiz')}
@@ -167,6 +176,36 @@ export default function AlphabetPage() {
                 'Marquer comme maîtrisée'
               )}
             </button>
+          </div>
+        </div>
+      )}
+
+      {tab === 'tracing' && (
+        <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
+          <div className="grid grid-cols-3 gap-2 xs:grid-cols-4 sm:grid-cols-6 md:grid-cols-7">
+            {alphabet.map((letter) => {
+              const isSelected = letter.id === selectedId
+              return (
+                <button
+                  key={letter.id}
+                  onClick={() => selectLetter(letter.id)}
+                  className={`flex aspect-square flex-col items-center justify-center rounded-xl border-2 font-arabic text-2xl transition sm:text-3xl ${
+                    isSelected
+                      ? 'border-brand-600 bg-brand-50 dark:bg-slate-700/50 text-brand-800 dark:text-slate-100'
+                      : 'border-brand-100 dark:border-slate-700 bg-white dark:bg-slate-800 text-brand-700 dark:text-slate-200 hover:border-brand-300'
+                  }`}
+                >
+                  {letter.char}
+                </button>
+              )
+            })}
+          </div>
+
+          <div className="flex flex-col items-center rounded-2xl border border-brand-100 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+            <p className="mb-4 flex items-center gap-1.5 self-start text-sm font-semibold text-brand-700 dark:text-slate-200">
+              <PenIcon className="h-4 w-4" /> {selected.name} — {selected.transliteration}
+            </p>
+            <LetterTracing key={selected.id} char={selected.char} />
           </div>
         </div>
       )}

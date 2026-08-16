@@ -15,12 +15,14 @@ const TajwidPage = lazy(() => import('./pages/TajwidPage'))
 const QuranPage = lazy(() => import('./pages/QuranPage'))
 const SurahPage = lazy(() => import('./pages/SurahPage'))
 const ProfilePage = lazy(() => import('./pages/ProfilePage'))
+const FamilyPage = lazy(() => import('./pages/FamilyPage'))
 const RevisionPage = lazy(() => import('./pages/RevisionPage'))
 const VocabularyPage = lazy(() => import('./pages/VocabularyPage'))
 const NamesPage = lazy(() => import('./pages/NamesPage'))
 const ProphetsPage = lazy(() => import('./pages/ProphetsPage'))
 const AdhkarPage = lazy(() => import('./pages/AdhkarPage'))
 const KnowledgePage = lazy(() => import('./pages/KnowledgePage'))
+const PrayerTimesPage = lazy(() => import('./pages/PrayerTimesPage'))
 const AboutPage = lazy(() => import('./pages/AboutPage'))
 
 function PageFallback() {
@@ -51,8 +53,10 @@ export default function App() {
           <Route path="/prophetes" element={<ProphetsPage />} />
           <Route path="/adhkar" element={<AdhkarPage />} />
           <Route path="/connaissances" element={<KnowledgePage />} />
+          <Route path="/horaires-qibla" element={<PrayerTimesPage />} />
           <Route path="/a-propos" element={<AboutPage />} />
           <Route path="/profil" element={<ProfilePage />} />
+          <Route path="/famille" element={<FamilyPage />} />
           <Route path="/revision" element={<RevisionPage />} />
           <Route path="*" element={<Home />} />
         </Route>

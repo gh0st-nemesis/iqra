@@ -2,6 +2,7 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useEffect, useRef, useState } from 'react'
 import { modules } from '../data/modules'
 import { useProgress, todayISO } from '../store/progress'
+import { useProfiles } from '../store/profiles'
 import { useTheme } from '../store/theme'
 import { useSettings } from '../store/settings'
 import { scheduleStreakReminder } from '../lib/notifications'
@@ -36,6 +37,12 @@ export default function Layout() {
   const location = useLocation()
   const asideRef = useRef<HTMLElement>(null)
   const hamburgerRef = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    // Migration douce vers les profils multiples (voir store/profiles.ts) : sans effet si des
+    // profils existent déjà.
+    useProfiles.getState().ensureDefaultProfile()
+  }, [])
 
   useEffect(() => {
     const wasAlreadyToday = useProgress.getState().lastActiveDate === todayISO()
@@ -270,6 +277,10 @@ export default function Layout() {
 
         <footer className="border-t border-brand-100 py-4 text-center text-xs text-brand-400 dark:border-slate-800 dark:text-slate-500">
           Iqra&apos; · Apprendre l&apos;arabe et l&apos;islam pas à pas ·{' '}
+          <NavLink to="/famille" className="underline hover:text-brand-600 dark:hover:text-slate-300">
+            Espace famille
+          </NavLink>{' '}
+          ·{' '}
           <NavLink to="/a-propos" className="underline hover:text-brand-600 dark:hover:text-slate-300">
             À propos
           </NavLink>
