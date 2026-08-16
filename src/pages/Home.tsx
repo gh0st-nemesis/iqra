@@ -191,7 +191,11 @@ function ModuleSection({
                 </div>
               </div>
               <p className="mb-4 flex-1 text-sm text-brand-600 dark:text-slate-400">{m.description}</p>
-              <ProgressBar value={p.value} max={p.max} label={`${p.value}/${p.max}`} />
+              {p ? (
+                <ProgressBar value={p.value} max={p.max} label={`${p.value}/${p.max}`} />
+              ) : (
+                <p className="text-xs font-medium text-brand-400 dark:text-slate-500">Outil — pas de progression associée</p>
+              )}
             </Link>
           )
         })}
