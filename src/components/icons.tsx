@@ -450,6 +450,34 @@ export function CompassIcon(props: IconProps) {
   )
 }
 
+export function KaabaIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <rect x="5" y="6" width="14" height="14" rx="0.5" />
+      <path d="M5 6 9 3h6l4 3" />
+      <path d="M5 11h14" />
+      <path d="M8 6v5M16 6v5" strokeDasharray="1.6 1.6" />
+    </svg>
+  )
+}
+
+export function NavigationIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <path d="m12 3 7 16-7-4-7 4 7-16Z" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
+export function ClockIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M12 7.5V12l3 2" />
+    </svg>
+  )
+}
+
 export function SearchIcon(props: IconProps) {
   return (
     <svg {...base(props)}>

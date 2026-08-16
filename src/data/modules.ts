@@ -134,4 +134,14 @@ export const modules: ModuleMeta[] = [
     path: '/connaissances',
     track: 'islam',
   },
+  {
+    id: 'qibla',
+    title: 'Horaires & Qibla',
+    arabicTitle: 'أوقات الصلاة والقبلة',
+    description: 'Horaires des 5 prières et direction de la Qibla, selon ta position',
+    icon: 'kaaba',
+    color: 'from-teal-600 to-emerald-700',
+    path: '/horaires-qibla',
+    track: 'islam',
+  },
 ]
