@@ -14,9 +14,10 @@ import { prophets } from '../data/prophets'
 import { adhkarItems } from '../data/adhkar'
 import { akhlaqLessons, hijriMonths, pillarsOfFaith, pillarsOfIslam } from '../data/knowledge'
 import { TOTAL_QURAN_VERSES } from '../lib/quranApi'
+import { dayOfYear, getDailyRecommendation } from '../lib/dailyPath'
 import { useProgress } from '../store/progress'
 import ProgressBar from '../components/ProgressBar'
-import { LightbulbIcon, RefreshIcon } from '../components/icons'
+import { ArrowLeftIcon, LightbulbIcon, RefreshIcon, SproutIcon } from '../components/icons'
 import { moduleIcons } from '../components/moduleIcons'
 
 export default function Home() {
@@ -69,6 +70,8 @@ export default function Home() {
   const arabicModules = modules.filter((m) => m.track === 'arabic')
   const islamModules = modules.filter((m) => m.track === 'islam')
 
+  const dailyRecommendation = getDailyRecommendation(modules, progressByModule, dayOfYear())
+
   return (
     <div>
       <section className="mb-8 rounded-3xl bg-gradient-to-br from-brand-600 to-brand-800 px-6 py-10 text-white shadow-lg">
@@ -83,6 +86,30 @@ export default function Home() {
           continue comme ça !
         </p>
       </section>
+
+      {dailyRecommendation && (
+        <Link
+          to={dailyRecommendation.module.path}
+          className="group mb-8 flex items-center justify-between gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-emerald-900/50 dark:bg-emerald-950/30"
+        >
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white">
+              <SproutIcon className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="font-bold text-emerald-800 dark:text-emerald-300">
+                Leçon du jour : {dailyRecommendation.module.title}
+              </p>
+              <p className="text-sm text-emerald-700 dark:text-emerald-400">
+                {dailyRecommendation.reason === 'arabic'
+                  ? 'Parcours langue arabe — la suite logique de ta progression'
+                  : 'Parcours connaissances islamiques — la suite logique de ta progression'}
+              </p>
+            </div>
+          </div>
+          <ArrowLeftIcon className="h-5 w-5 shrink-0 rotate-180 text-emerald-600 transition group-hover:translate-x-1 dark:text-emerald-400" />
+        </Link>
+      )}
 
       {totalWeak > 0 && (
         <Link
