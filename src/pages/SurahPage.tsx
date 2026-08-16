@@ -11,7 +11,10 @@ import {
   DownloadIcon,
   PlayIcon,
   Volume2Icon,
+  XCircleIcon,
 } from '../components/icons'
+
+const PLAYBACK_RATES = [0.75, 1, 1.25] as const
 
 // Au-delà de ce nombre de versets, on prévient que le mp3 complet peut être volumineux (seul le
 // débit 128 kbps est disponible pour le téléchargement par sourate, voir lib/quranApi.ts).
@@ -27,8 +30,10 @@ export default function SurahPage() {
   const [playingVerse, setPlayingVerse] = useState<number | null>(null)
   const [autoPlay, setAutoPlay] = useState(false)
   const [showPhonetic, setShowPhonetic] = useState(true)
+  const [playbackRate, setPlaybackRate] = useState<(typeof PLAYBACK_RATES)[number]>(1)
 
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const verseRefs = useRef<Record<number, HTMLDivElement | null>>({})
   const markVerseListened = useProgress((s) => s.markVerseListened)
   const versesListened = useProgress((s) => s.quranVersesListened)
   const memorizedVerses = useProgress((s) => s.memorizedVerses)
@@ -51,8 +56,15 @@ export default function SurahPage() {
     markVerseListened(`${surahNumber}:${verseNumber}`)
     if (audioRef.current) {
       audioRef.current.src = verse.audioUrl
+      audioRef.current.playbackRate = playbackRate
       audioRef.current.play().catch(() => {})
     }
+  }
+
+  function stopPlayback() {
+    audioRef.current?.pause()
+    setPlayingVerse(null)
+    setAutoPlay(false)
   }
 
   function handleAudioEnded() {
@@ -68,6 +80,19 @@ export default function SurahPage() {
       setAutoPlay(false)
     }
   }
+
+  // Applique immédiatement un changement de vitesse au verset en cours de lecture (les suivants
+  // l'héritent de toute façon via `playVerse`).
+  useEffect(() => {
+    if (audioRef.current) audioRef.current.playbackRate = playbackRate
+  }, [playbackRate])
+
+  // Lecture continue : fait défiler la page pour garder le verset en cours visible, sans geste de
+  // l'utilisateur. Pas de scroll lors d'un clic manuel sur un seul verset (déjà visible à l'écran).
+  useEffect(() => {
+    if (!autoPlay || playingVerse === null) return
+    verseRefs.current[playingVerse]?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }, [autoPlay, playingVerse])
 
   function toggleMemorized(verseNumber: number, text: string, transliteration: string | null, audioUrl: string | null) {
     if (!surah) return
@@ -107,12 +132,35 @@ export default function SurahPage() {
             <p className="font-semibold text-emerald-50">{surah.englishName}</p>
             <p className="text-sm italic text-emerald-200">{surah.englishNameTranslation}</p>
             <div className="mt-4 flex flex-wrap items-center gap-2">
-              <button
-                onClick={() => playVerse(1, true)}
-                className="flex items-center gap-1.5 rounded-full bg-white/15 px-5 py-2 text-sm font-semibold backdrop-blur transition hover:bg-white/25"
-              >
-                <PlayIcon className="h-4 w-4" /> Écouter toute la sourate
-              </button>
+              {autoPlay && playingVerse !== null ? (
+                <button
+                  onClick={stopPlayback}
+                  className="flex items-center gap-1.5 rounded-full bg-white/25 px-5 py-2 text-sm font-semibold backdrop-blur transition hover:bg-white/35"
+                >
+                  <XCircleIcon className="h-4 w-4" /> Arrêter la lecture (verset {playingVerse})
+                </button>
+              ) : (
+                <button
+                  onClick={() => playVerse(1, true)}
+                  className="flex items-center gap-1.5 rounded-full bg-white/15 px-5 py-2 text-sm font-semibold backdrop-blur transition hover:bg-white/25"
+                >
+                  <PlayIcon className="h-4 w-4" /> Écouter toute la sourate
+                </button>
+              )}
+              <div className="flex items-center gap-1 rounded-full bg-white/15 px-1.5 py-1 backdrop-blur">
+                {PLAYBACK_RATES.map((rate) => (
+                  <button
+                    key={rate}
+                    onClick={() => setPlaybackRate(rate)}
+                    title="Vitesse de lecture (utile pour la mémorisation)"
+                    className={`rounded-full px-2.5 py-1 text-xs font-semibold transition ${
+                      playbackRate === rate ? 'bg-white text-emerald-700' : 'text-emerald-50 hover:bg-white/20'
+                    }`}
+                  >
+                    {rate}×
+                  </button>
+                ))}
+              </div>
               <button
                 onClick={() => setShowPhonetic((v) => !v)}
                 className="flex items-center gap-1.5 rounded-full bg-white/15 px-5 py-2 text-sm font-semibold backdrop-blur transition hover:bg-white/25"
@@ -145,6 +193,9 @@ export default function SurahPage() {
               return (
                 <div
                   key={verse.numberInSurah}
+                  ref={(el) => {
+                    verseRefs.current[verse.numberInSurah] = el
+                  }}
                   className={`rounded-2xl border p-5 shadow-sm transition ${
                     isPlaying
                       ? 'border-emerald-400 bg-emerald-50 dark:border-emerald-600 dark:bg-emerald-950/30'
