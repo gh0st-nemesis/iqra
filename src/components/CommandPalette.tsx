@@ -5,7 +5,7 @@ import { vocabWords } from '../data/vocabulary'
 import { namesOfAllah } from '../data/namesOfAllah'
 import { prophets } from '../data/prophets'
 import { surahIndex } from '../data/surahIndex'
-import { HomeIcon, InfoIcon, LandmarkIcon, LayersIcon, RefreshIcon, ScrollIcon, SearchIcon, SettingsIcon, SparkleIcon, type IconProps } from './icons'
+import { HomeIcon, InfoIcon, LandmarkIcon, LayersIcon, RefreshIcon, ScrollIcon, SearchIcon, SettingsIcon, SparkleIcon, UsersIcon, type IconProps } from './icons'
 import { moduleIcons } from './moduleIcons'
 
 interface PaletteItem {
@@ -28,6 +28,7 @@ const browseItems: PaletteItem[] = [
   })),
   { id: 'revision', label: 'Révision', description: 'Quiz ciblé sur tes points faibles', path: '/revision', icon: RefreshIcon },
   { id: 'profil', label: 'Profil', description: 'Progression, badges, réglages', path: '/profil', icon: SettingsIcon },
+  { id: 'famille', label: 'Espace famille', description: 'Comparer la progression de tous les profils', path: '/famille', icon: UsersIcon },
   { id: 'about', label: 'À propos', description: "Posture éditoriale, sources", path: '/a-propos', icon: InfoIcon },
 ]
 

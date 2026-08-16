@@ -487,6 +487,17 @@ export function EarIcon(props: IconProps) {
   )
 }
 
+export function UsersIcon(props: IconProps) {
+  return (
+    <svg {...base(props)}>
+      <circle cx="9" cy="8" r="3.2" />
+      <path d="M3.5 19c0-3 2.5-5.2 5.5-5.2s5.5 2.2 5.5 5.2" />
+      <path d="M16 8.2a3 3 0 1 1 1.5 5.6" />
+      <path d="M15.5 13.8c2.4.3 4.5 2.2 4.5 4.7" />
+    </svg>
+  )
+}
+
 export function SearchIcon(props: IconProps) {
   return (
     <svg {...base(props)}>

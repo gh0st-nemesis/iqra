@@ -15,6 +15,7 @@ const TajwidPage = lazy(() => import('./pages/TajwidPage'))
 const QuranPage = lazy(() => import('./pages/QuranPage'))
 const SurahPage = lazy(() => import('./pages/SurahPage'))
 const ProfilePage = lazy(() => import('./pages/ProfilePage'))
+const FamilyPage = lazy(() => import('./pages/FamilyPage'))
 const RevisionPage = lazy(() => import('./pages/RevisionPage'))
 const VocabularyPage = lazy(() => import('./pages/VocabularyPage'))
 const NamesPage = lazy(() => import('./pages/NamesPage'))
@@ -55,6 +56,7 @@ export default function App() {
           <Route path="/horaires-qibla" element={<PrayerTimesPage />} />
           <Route path="/a-propos" element={<AboutPage />} />
           <Route path="/profil" element={<ProfilePage />} />
+          <Route path="/famille" element={<FamilyPage />} />
           <Route path="/revision" element={<RevisionPage />} />
           <Route path="*" element={<Home />} />
         </Route>
